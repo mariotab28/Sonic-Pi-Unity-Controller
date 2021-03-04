@@ -241,21 +241,27 @@ public class OSCHandler : MonoBehaviour
 		
 		SendMessageToClient(clientId, address, temp);
 	}
-	
-	/// <summary>
-	/// Sends an OSC message to a specified client, given its clientId (defined at the OSC client construction),
-	/// OSC address and a list of values. Also updates the client log.
-	/// </summary>
-	/// <param name="clientId">
-	/// A <see cref="System.String"/>
-	/// </param>
-	/// <param name="address">
-	/// A <see cref="System.String"/>
-	/// </param>
-	/// <param name="values">
-	/// A <see cref="List<T>"/>
-	/// </param>
-	public void SendMessageToClient<T>(string clientId, string address, List<T> values)
+
+
+    public void SendMessageToClient(string clientId, string address, ActionMessage msg)
+    {
+        SendMessageToClient(clientId, address, msg.ToObjectList());
+    }
+
+    /// <summary>
+    /// Sends an OSC message to a specified client, given its clientId (defined at the OSC client construction),
+    /// OSC address and a list of values. Also updates the client log.
+    /// </summary>
+    /// <param name="clientId">
+    /// A <see cref="System.String"/>
+    /// </param>
+    /// <param name="address">
+    /// A <see cref="System.String"/>
+    /// </param>
+    /// <param name="values">
+    /// A <see cref="List<T>"/>
+    /// </param>
+    public void SendMessageToClient<T>(string clientId, string address, List<T> values)
 	{	
 		if(_clients.ContainsKey(clientId))
 		{

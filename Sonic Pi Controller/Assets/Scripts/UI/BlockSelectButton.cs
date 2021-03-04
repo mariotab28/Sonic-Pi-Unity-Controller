@@ -12,7 +12,10 @@ public class BlockSelectButton : MonoBehaviour
 
     public GameObject blockContainerGO;
 
-    public GameObject blockPF;
+    public BlockController blockPF;
+
+    //TODO: Cambiar de sitio
+    int blocksCount = 0;
 
     #endregion
 
@@ -21,13 +24,13 @@ public class BlockSelectButton : MonoBehaviour
     /// </summary>
     public void SelectActionBlock()
     {
-        // Sends the action message
-        SonicPiManager.Instance.sendActionMessage(blockActionName);
 
         // Instantiate UI action block
-        GameObject block = Instantiate(blockPF, blockContainerGO.transform);
+        BlockController block = Instantiate(blockPF, blockContainerGO.transform);
         // TODO: Script para configuración de los bloques
-        block.transform.GetChild(0).GetComponent<TMPro.TMP_Text>().text = blockActionName;
+        //block.transform.GetChild(0).GetComponent<TMPro.TMP_Text>().text = blockActionName;
+        block.ConfigureBlock(blocksCount, blockActionName);
+        blocksCount++;
 
         // Hide selection menu 
         selectionMenuGO.SetActive(false);
