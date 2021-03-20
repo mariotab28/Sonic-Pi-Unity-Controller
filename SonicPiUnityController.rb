@@ -14,7 +14,7 @@ require 'ostruct'
 ============================
 '''
 ''' Attribute structure of the SYNTH play action '''
-SynthAttributes = Struct.new :action, :synth_name, :notes, :amp, :pan,
+SynthAttributes = Struct.new :action, :synth_name, :notes, :mode, :amp, :pan,
 :attack, :decay, :sustain, :release, :attack_level, :decay_level, :sustain_level do
   # Initializes each attribute to its default value
   def initialize(*)
@@ -22,6 +22,7 @@ SynthAttributes = Struct.new :action, :synth_name, :notes, :amp, :pan,
     self.action ||= 'synth'
     self.synth_name ||= 'beep'
     self.notes ||= [52]
+    self.mode ||= 'tick'
     self.amp ||= 1
     self.pan ||= 0
     self.attack ||= 0
@@ -150,7 +151,7 @@ def listenUnityCommand(id, commands)
   if val[0] == "stop"
     comAttr = SleepAttributes.new("stop", -1)
     com = Command.new(0, 0, comAttr)
-    puts "APPLICATION STOPPED"
+    puts "Application stopped"
   else
     # Parse message to Command
     loopId = val[0]
@@ -177,15 +178,16 @@ def listenUnityCommand(id, commands)
       comAttr.action = val[pre_i]
       comAttr.synth_name = val[pre_i + 1]
       comAttr.notes = notesToPlay
-      comAttr.amp = val[i]
-      comAttr.pan = val[i + 1]
-      comAttr.attack = val[i + 2]
-      comAttr.sustain = val[i + 3]
-      comAttr.release = val[i + 4]
-      comAttr.decay = val[i + 5]
-      comAttr.attack_level = val[i + 6]
-      comAttr.sustain_level = val[i + 7]
-      comAttr.decay_level = val[i + 8]
+      comAttr.mode = val[i]
+      comAttr.amp = val[i + 1]
+      comAttr.pan = val[i + 2]
+      comAttr.attack = val[i + 3]
+      comAttr.sustain = val[i + 4]
+      comAttr.release = val[i + 5]
+      comAttr.decay = val[i + 6]
+      comAttr.attack_level = val[i + 7]
+      comAttr.sustain_level = val[i + 8]
+      comAttr.decay_level = val[i + 9]
     # SAMPLE
     when "sample"
       comAttr = SampleAttributes.new()
@@ -229,7 +231,14 @@ Process the command list
 	# ACTION: PLAY SYNTH
       when "synth"
 	use_synth com.com_attr.synth_name
-        tickNote = com.com_attr.notes.tick
+        if com.com_attr.mode == 'tick' then
+            tickNote = com.com_attr.notes.tick
+	elsif com.com_attr.mode == 'chord' then
+            tickNote = com.com_attr.notes
+	else
+            puts "Error: Unknown synth play mode."
+	end
+
         play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan, 
             attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, 
             decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, 
@@ -249,7 +258,7 @@ Process the command list
 	puts "ERROR: Unknown command name. Can't process command."
       end
     end
-    sleep 1 # Needs to sleep at least 0.01
+    sleep 0.1 # Needs to sleep at least 0.01
   end
   
   

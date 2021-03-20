@@ -26,7 +26,8 @@ public class BlockController : MonoBehaviour
                 msg.actionName = action;
                 msg.blockId = id;
                 (msg as SynthMessage).playerName = "piano";
-                (msg as SynthMessage).notes = new List<int>(new int[4] { 64, 80, 95, 110 });
+                (msg as SynthMessage).mode = "tick";
+                (msg as SynthMessage).notes = new List<int>(new int[3] { 60, 65, 67 });
                 (msg as SynthMessage).numOfNotes = (msg as SynthMessage).notes.Count;
                 (msg as SynthMessage).pan = 0;
                 (msg as SynthMessage).release = 5;

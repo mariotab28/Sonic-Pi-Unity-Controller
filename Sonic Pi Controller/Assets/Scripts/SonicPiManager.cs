@@ -79,6 +79,7 @@ public class SynthMessage : PlayerMessage
 {
     public int numOfNotes = 1;
     public List<int> notes = new List<int>(new int[] { 52 });
+    public string mode = "tick";
 
     public override List<object> ToObjectList()
     {
@@ -90,6 +91,7 @@ public class SynthMessage : PlayerMessage
         list.Add(numOfNotes);
         foreach (int note in notes)
             list.Add(note);
+        list.Add(mode);
         list.Add(amp);
         list.Add(pan);
         list.Add(attack);
