@@ -14,29 +14,38 @@ public class BlockController : MonoBehaviour
         id = blockId;
         
         // Creates the message object
-        ActionMessage msg = new ActionMessage();
-        msg.actionName = action;
-        msg.blockId = id;
+        ActionMessage msg = null;
 
         //TODO: De momento está hardcodeado para pruebas
         if (action == "synth")
         {
+            msg = new SynthMessage();
+            msg.actionName = action;
+            msg.blockId = id;
             if (id == 0)
             {
-                msg.synthName = "piano";
-                msg.note = 80;
-                msg.pan = -1;
+                (msg as SynthMessage).playerName = "piano";
+                (msg as SynthMessage).notes = new List<int>(new int[4] { 64, 80, 95, 110 });
+                (msg as SynthMessage).numOfNotes = (msg as SynthMessage).notes.Count;
+                (msg as SynthMessage).pan = -1;
             }
             else
             {
-                msg.synthName = "beep";
-                msg.note = 40;
-                msg.pan = 1;
+                (msg as SynthMessage).playerName = "beep";
+                (msg as SynthMessage).notes = new List<int>(new int[1] { 40 });
+                (msg as SynthMessage).pan = 1;
             }
         }
+        else if (action == "sleep")
+        {
+            msg = new SleepMessage();
+            msg.actionName = action;
+            msg.blockId = id;
+            (msg as SleepMessage).sleepDuration = 1;
+        }
 
-        // Sends the action message
-        SonicPiManager.Instance.sendActionMessage(msg);
+            // Sends the action message
+            SonicPiManager.Instance.sendActionMessage(msg);
     
     }
 }
