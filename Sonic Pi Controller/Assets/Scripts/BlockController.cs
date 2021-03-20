@@ -19,21 +19,25 @@ public class BlockController : MonoBehaviour
         //TODO: De momento está hardcodeado para pruebas
         if (action == "synth")
         {
-            msg = new SynthMessage();
-            msg.actionName = action;
-            msg.blockId = id;
+            
             if (id == 0)
             {
+                msg = new SynthMessage();
+                msg.actionName = action;
+                msg.blockId = id;
                 (msg as SynthMessage).playerName = "piano";
                 (msg as SynthMessage).notes = new List<int>(new int[4] { 64, 80, 95, 110 });
                 (msg as SynthMessage).numOfNotes = (msg as SynthMessage).notes.Count;
-                (msg as SynthMessage).pan = -1;
+                (msg as SynthMessage).pan = 0;
+                (msg as SynthMessage).release = 5;
             }
             else
             {
-                (msg as SynthMessage).playerName = "beep";
-                (msg as SynthMessage).notes = new List<int>(new int[1] { 40 });
-                (msg as SynthMessage).pan = 1;
+                msg = new PlayerMessage();
+                msg.actionName = "sample";
+                msg.blockId = id;
+                (msg as PlayerMessage).playerName = "bd_haus";
+                (msg as PlayerMessage).pan = 1;
             }
         }
         else if (action == "sleep")

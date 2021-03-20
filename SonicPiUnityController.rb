@@ -173,16 +173,37 @@ def listenUnityCommand(id, commands)
       
       pre_i = i
       i = ei + 1
-      
-      comAttr = SynthAttributes.new(val[pre_i], val[pre_i+1], notesToPlay, val[i], val[i+1], val[i+2], val[i+3], val[i+4], val[i+5], val[i+6], val[i+7], val[i+8])
-      # SAMPLE
-      when "sample"
-      comAttr = SampleAttributes.new(val[i], val[i+1], val[i+2], val[i+3], val[i+4], val[i+5], val[i+6], val[i+7], val[i+8], val[i+9], val[i+10])
-      ''', val[i+11], val[i+12], val[i+13], val[i+14], val[i+15], val[i+13], val[i+14], val[i+15], val[i+16], val[i+17], val[i+18], val[i+19], val[i+20], val[i+21], val[i+22], val[i+23], val[i+24], val[i+13], val[i+14], val[i+15])'''
-      else
-	comAttr = nil
-	puts "ERROR: Unknown action name."
-      end
+      comAttr = SynthAttributes.new()
+      comAttr.action = val[pre_i]
+      comAttr.synth_name = val[pre_i + 1]
+      comAttr.notes = notesToPlay
+      comAttr.amp = val[i]
+      comAttr.pan = val[i + 1]
+      comAttr.attack = val[i + 2]
+      comAttr.sustain = val[i + 3]
+      comAttr.release = val[i + 4]
+      comAttr.decay = val[i + 5]
+      comAttr.attack_level = val[i + 6]
+      comAttr.sustain_level = val[i + 7]
+      comAttr.decay_level = val[i + 8]
+    # SAMPLE
+    when "sample"
+      comAttr = SampleAttributes.new()
+      comAttr.action = val[i]
+      comAttr.sample_name = val[i + 1]
+      comAttr.amp = val[i + 2]
+      comAttr.pan = val[i + 3]
+      comAttr.attack = val[i + 4]
+      comAttr.sustain = val[i + 5]
+      comAttr.release = val[i + 6]
+      comAttr.decay = val[i + 7]
+      comAttr.attack_level = val[i + 8]
+      comAttr.sustain_level = val[i + 9]
+      comAttr.decay_level = val[i + 10]
+    else
+      comAttr = nil
+      puts "ERROR: Unknown action name."
+    end
       
       com = Command.new(loopId, comId, comAttr)
     end
@@ -209,10 +230,14 @@ Process the command list
       when "synth"
 	use_synth com.com_attr.synth_name
         tickNote = com.com_attr.notes.tick
-        play tickNote
+        play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan, 
+            attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, 
+            decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, 
+            decay_level: com.com_attr.decay_level
 	# ACTION: PLAY SAMPLE
       when "sample"
-	sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level
+	sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
+            attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level
 	''' TODO: RESTO DE ATRIBUTOS '''
 	# ACTION: WITH FX
       when "fx"
