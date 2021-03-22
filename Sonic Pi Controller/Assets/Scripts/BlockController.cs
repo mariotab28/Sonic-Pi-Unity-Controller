@@ -20,7 +20,7 @@ public class BlockController : MonoBehaviour
         if (action == "synth")
         {
             
-            if (id == 0)
+            if (id == 1)
             {
                 msg = new SynthMessage();
                 msg.actionName = action;
@@ -30,6 +30,7 @@ public class BlockController : MonoBehaviour
                 (msg as SynthMessage).notes = new List<int>(new int[3] { 60, 65, 67 });
                 (msg as SynthMessage).numOfNotes = (msg as SynthMessage).notes.Count;
                 (msg as SynthMessage).pan = 0;
+                (msg as SynthMessage).fx = "echo";
                 (msg as SynthMessage).release = 5;
             }
             else
@@ -38,7 +39,8 @@ public class BlockController : MonoBehaviour
                 msg.actionName = "sample";
                 msg.blockId = id;
                 (msg as PlayerMessage).playerName = "bd_haus";
-                (msg as PlayerMessage).pan = 1;
+                (msg as PlayerMessage).fx = "echo";
+                (msg as PlayerMessage).pan = 0;
             }
         }
         else if (action == "sleep")

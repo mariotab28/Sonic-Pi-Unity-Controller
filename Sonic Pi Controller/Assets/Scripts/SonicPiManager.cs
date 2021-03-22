@@ -51,6 +51,7 @@ public class PlayerMessage : ActionMessage
     public float attack_level = 1;
     public float sustain_level = 1;
     public float decay_level = 1;
+    public string fx = "";
 
     public override List<object> ToObjectList()
     {
@@ -68,6 +69,7 @@ public class PlayerMessage : ActionMessage
         list.Add(attack_level);
         list.Add(sustain_level);
         list.Add(decay_level);
+        list.Add(fx);
         return list;
     }
 }
@@ -101,6 +103,7 @@ public class SynthMessage : PlayerMessage
         list.Add(attack_level);
         list.Add(sustain_level);
         list.Add(decay_level);
+        list.Add(fx);
         return list;
     }
 }

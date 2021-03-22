@@ -15,7 +15,7 @@ require 'ostruct'
 '''
 ''' Attribute structure of the SYNTH play action '''
 SynthAttributes = Struct.new :action, :synth_name, :notes, :mode, :amp, :pan,
-:attack, :decay, :sustain, :release, :attack_level, :decay_level, :sustain_level do
+:attack, :decay, :sustain, :release, :attack_level, :decay_level, :sustain_level, :fx do
   # Initializes each attribute to its default value
   def initialize(*)
     super
@@ -32,6 +32,8 @@ SynthAttributes = Struct.new :action, :synth_name, :notes, :mode, :amp, :pan,
     self.attack_level ||= 1
     self.sustain_level ||= 1
     self.decay_level ||= self.sustain_level
+    # Effect
+    self.fx ||= ''
   end
 end
 
@@ -41,7 +43,7 @@ SampleAttributes = Struct.new :action, :sample_name, :amp, :pan,
   :lpf, :lpf_attack, :lpf_decay, :lpf_sustain, :lpf_release, :lpf_min, :lpf_init_level, :lpf_release_level, :lpf_sustain_level, :lpf_decay_level, :lpf_attack_level, :lpf_env_curve,
   :hpf, :hpf_max, :hpf_attack, :hpf_decay, :hpf_sustain, :hpf_release, :hpf_init_level, :hpf_release_level, :hpf_sustain_level, :hpf_decay_level, :hpf_attack_level, :hpf_env_curve,
   :rate, :start, :finish, :norm, :pitch, :window_size, :pitch_dis, :time_dis, :compress, :threshold, :clamp_time,
-:slope_above, :slope_below, :relax_time do
+:slope_above, :slope_below, :relax_time, :fx do
   # Initializes each attribute to its default value
   def initialize(*)
     super
@@ -98,6 +100,8 @@ SampleAttributes = Struct.new :action, :sample_name, :amp, :pan,
     self.slope_above = 0.5
     self.slope_below = 1
     self.relax_time = 0.01
+    # Effect    
+    self.fx ||= ''
   end
 end
 
@@ -188,6 +192,7 @@ def listenUnityCommand(id, commands)
       comAttr.attack_level = val[i + 7]
       comAttr.sustain_level = val[i + 8]
       comAttr.decay_level = val[i + 9]
+      comAttr.fx = val[i + 10]
     # SAMPLE
     when "sample"
       comAttr = SampleAttributes.new()
@@ -202,6 +207,7 @@ def listenUnityCommand(id, commands)
       comAttr.attack_level = val[i + 8]
       comAttr.sustain_level = val[i + 9]
       comAttr.decay_level = val[i + 10]
+      comAttr.fx = val[i + 11]
     else
       comAttr = nil
       puts "ERROR: Unknown action name."
@@ -239,14 +245,31 @@ Process the command list
             puts "Error: Unknown synth play mode."
 	end
 
-        play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan, 
-            attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, 
-            decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, 
-            decay_level: com.com_attr.decay_level
+        if com.com_attr.fx != ''
+	  with_fx com.com_attr.fx do
+              play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
+                attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
+                decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
+                decay_level: com.com_attr.decay_level
+	  end
+	else
+            play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
+              attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
+              decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
+              decay_level: com.com_attr.decay_level
+	end
 	# ACTION: PLAY SAMPLE
       when "sample"
-	sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
-            attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level
+	if com.com_attr.fx != ''
+	  with_fx com.com_attr.fx do
+	    sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
+                attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level
+	  end
+	else
+	  sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
+              attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level
+	end
+	
 	''' TODO: RESTO DE ATRIBUTOS '''
 	# ACTION: WITH FX
       when "fx"
@@ -258,7 +281,7 @@ Process the command list
 	puts "ERROR: Unknown command name. Can't process command."
       end
     end
-    sleep 0.1 # Needs to sleep at least 0.01
+    sleep 0.5 # Needs to sleep at least 0.01
   end
   
   
