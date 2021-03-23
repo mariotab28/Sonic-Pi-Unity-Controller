@@ -12,16 +12,14 @@ public class BlockController : MonoBehaviour
     {
         blockNameText.text = action;
         id = blockId;
-        
+
         // Creates the message object
         ActionMessage msg = null;
 
         //TODO: De momento está hardcodeado para pruebas
-        if (action == "synth")
+        switch (action)
         {
-            
-            if (id == 1)
-            {
+            case "synth":
                 msg = new SynthMessage();
                 msg.actionName = action;
                 msg.blockId = id;
@@ -32,27 +30,29 @@ public class BlockController : MonoBehaviour
                 (msg as SynthMessage).pan = 0;
                 (msg as SynthMessage).fx = "echo";
                 (msg as SynthMessage).release = 5;
-            }
-            else
-            {
+                break;
+
+            case "sample":
                 msg = new PlayerMessage();
                 msg.actionName = "sample";
                 msg.blockId = id;
                 (msg as PlayerMessage).playerName = "bd_haus";
                 (msg as PlayerMessage).fx = "echo";
                 (msg as PlayerMessage).pan = 0;
-            }
-        }
-        else if (action == "sleep")
-        {
-            msg = new SleepMessage();
-            msg.actionName = action;
-            msg.blockId = id;
-            (msg as SleepMessage).sleepDuration = 1;
+                break;
+
+            case "sleep":
+                msg = new SleepMessage();
+                msg.actionName = action;
+                msg.blockId = id;
+                (msg as SleepMessage).sleepDuration = 1;
+                break;
+            default:
+                break;
         }
 
-            // Sends the action message
-            SonicPiManager.Instance.sendActionMessage(msg);
-    
+        // Sends the action message
+        SonicPiManager.Instance.sendActionMessage(msg);
+
     }
 }
