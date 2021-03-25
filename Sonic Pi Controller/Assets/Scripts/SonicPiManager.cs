@@ -7,15 +7,39 @@ using UnityEngine;
 // Sería mejor un struct? (no se pueden poner valores por defecto)
 
 /// <summary>
-/// MESSAGE ABSTRACT CLASS
+/// MESSAGE VIRTUAL CLASS
 /// </summary>  
-public abstract class ActionMessage
+public class ActionMessage
 {
     public int loopId = 0;
     public int blockId = 0;
     public string actionName = "";
 
-    public abstract List<object> ToObjectList();
+    public virtual List<object> ToObjectList()
+    {
+        List<object> list = new List<object>();
+        list.Add(loopId);
+        list.Add(blockId);
+        list.Add(actionName);
+        return list;
+    }
+}
+
+public class EditMessage : ActionMessage
+{
+    public string attributeName = "";
+    public float newValue = 0.0f;
+
+    public override List<object> ToObjectList()
+    {
+        List<object> list = new List<object>();
+        list.Add(loopId);
+        list.Add(blockId);
+        list.Add(actionName);
+        list.Add(attributeName);
+        list.Add(newValue);
+        return list;
+    }
 }
 
 /// <summary>

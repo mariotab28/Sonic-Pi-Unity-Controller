@@ -8,7 +8,18 @@ public class BlockController : MonoBehaviour
     public TMPro.TMP_Text blockNameText;
     int id;
 
-    public void ConfigureBlock(int blockId, string action)
+    public void RemoveBlock()
+    {
+        LoopManager.instance.RemoveBlockFromLoop(0, id);
+        Destroy(gameObject);
+    }
+
+    public void EditAttribute(string attrName, string value)
+    {
+        LoopManager.instance.EditBlockAttribute(0, id, attrName, float.Parse(value));
+    }
+
+    public ActionMessage ConfigureBlock(int blockId, string action)
     {
         blockNameText.text = action;
         id = blockId;
@@ -52,7 +63,7 @@ public class BlockController : MonoBehaviour
         }
 
         // Sends the action message
-        SonicPiManager.Instance.sendActionMessage(msg);
+        return msg; //SonicPiManager.Instance.sendActionMessage(msg);
 
     }
 }
