@@ -45,9 +45,8 @@ public class LoopManager : MonoBehaviour
         msg.loopId = loopId;
         msg.blockId = blockId;
         msg.actionName = "delete";
-        loops[loopId].blockCount--;
         loops[loopId].AddMessage(msg);
-
+        loops[loopId].RemoveBlockAt(blockId);
     }
 
     public void EditBlockAttribute(int loopId, int blockId, string attribute, float value)
@@ -68,6 +67,6 @@ public class LoopManager : MonoBehaviour
         BlockController block = Instantiate(blockPF, loops[loopId].transform.parent);
         ActionMessage msg = block.ConfigureBlock(blockId, action);
         loops[loopId].AddMessage(msg);
-        loops[loopId].blockCount++;
+        loops[loopId].AddBlock(block);
     }
 }

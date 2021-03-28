@@ -6,7 +6,7 @@ using TMPro;
 public class BlockController : MonoBehaviour
 {
     public TMPro.TMP_Text blockNameText;
-    int id;
+    public int id;
 
     public void RemoveBlock()
     {

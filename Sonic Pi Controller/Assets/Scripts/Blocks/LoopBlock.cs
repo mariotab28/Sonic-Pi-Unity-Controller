@@ -13,6 +13,7 @@ public class LoopBlock : MonoBehaviour
     int bpm = 60;
     string syncedWith = "";
 
+    List<BlockController> blocks = new List<BlockController>();
 
     public void AddMessage(ActionMessage msg)
     {
@@ -21,6 +22,7 @@ public class LoopBlock : MonoBehaviour
 
     public void SendActionMessages()
     {
+        /*
         int c = messages.Count;
         for (int i = 0; i < c; i++)
         {
@@ -29,6 +31,27 @@ public class LoopBlock : MonoBehaviour
         }
 
         messages.Clear();
+        */
+
+        SonicPiManager.Instance.sendActionMessage(messages[0]);
+        messages.RemoveAt(0);
+    }
+
+    public void AddBlock(BlockController block)
+    {
+        blocks.Add(block);
+        blockCount++;
+    }
+
+    public void RemoveBlockAt(int index)
+    {
+        blocks.RemoveAt(index);
+
+        for (int i = index; i < blocks.Count; i++)
+        {
+            blocks[i].id--;
+        }
+        blockCount--;
     }
 
 
