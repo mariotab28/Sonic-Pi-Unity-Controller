@@ -62,11 +62,12 @@ public class LoopManager : MonoBehaviour
 
     public void AddBlockToLoop(int loopId, int blockId, string action)
     {
-        // Add the block
-        Debug.Log("Adding " + action + " block.");
-        BlockController block = Instantiate(blockPF, loops[loopId].transform.parent);
-        ActionMessage msg = block.ConfigureBlock(blockId, action);
-        loops[loopId].AddMessage(msg);
-        loops[loopId].AddBlock(block);
+        // Ask the loop to add the block
+        loops[loopId].AddBlock(action, blockId);
+    }
+
+    public void AddMessage(int loopId, ActionMessage message)
+    {
+        loops[loopId].AddMessage(message);
     }
 }

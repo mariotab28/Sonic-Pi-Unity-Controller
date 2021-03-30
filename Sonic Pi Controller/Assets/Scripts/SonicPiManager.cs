@@ -3,8 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 
-// Duda: uso de class para valores predeterminados
-// Sería mejor un struct? (no se pueden poner valores por defecto)
+// TODO: Cambiar las clases a ActionAttr, etc. y hacer una clase ActionMessage que tenga: numMsgs y List<ActionAttr> y un método para pasarlo todo a una List<object>
 
 /// <summary>
 /// MESSAGE VIRTUAL CLASS
