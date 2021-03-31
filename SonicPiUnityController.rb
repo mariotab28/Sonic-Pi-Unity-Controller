@@ -241,6 +241,8 @@ Process the command list
             tickNote = com.com_attr.notes.tick
 	elsif com.com_attr.mode == 'chord' then
             tickNote = com.com_attr.notes
+        elsif com.com_attr.mode == 'choose' then
+            tickNote = com.com_attr.notes.choose
 	else
             puts "Error: Unknown synth play mode."
 	end
