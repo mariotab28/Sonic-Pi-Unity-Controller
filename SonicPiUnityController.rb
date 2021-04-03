@@ -2,7 +2,7 @@
 --------------------------------------------------------
 Sonic Pi graphical user interface using Unity
 --------------------------------------------------------
-by Gonzalo María Cidoncha Pérez and Mario Tabasco Vargas
+by Gonzalo Marï¿½a Cidoncha Pï¿½rez and Mario Tabasco Vargas
 Version 0.0
 '''
 
@@ -73,8 +73,8 @@ SampleAttributes = Struct.new :action, :sample_name, :amp, :pan,
     self.lpf_attack_level ||= self.lpf_decay_level
     self.lpf_env_curve ||= 2
     # High Pass Filter
-    self.hpf = -1
-    self.hpf_max = 200
+    self.hpf ||= -1
+    self.hpf_max ||= 200
     self.hpf_attack ||= self.attack
     self.hpf_decay ||= self.decay
     self.hpf_sustain ||= self.sustain
@@ -86,20 +86,20 @@ SampleAttributes = Struct.new :action, :sample_name, :amp, :pan,
     self.hpf_attack_level ||= self.hpf_decay_level
     self.hpf_env_curve ||= 2
     # Other sample attributes
-    self.rate = 1
-    self.start = 0
-    self.finish = 1
-    self.norm = 0
-    self.pitch = 0
-    self.window_size = 0.2
-    self.pitch_dis = 0.0
-    self.time_dis = 0.0
-    self.compress = 0
-    self.threshold = 0.2
-    self.clamp_time = 0.01
-    self.slope_above = 0.5
-    self.slope_below = 1
-    self.relax_time = 0.01
+    self.rate ||= 1
+    self.start ||= 0
+    self.finish ||= 1
+    self.norm ||= 0
+    self.pitch ||= 0
+    self.window_size ||= 0.2
+    self.pitch_dis ||= 0.0
+    self.time_dis ||= 0.0
+    self.compress ||= 0
+    self.threshold ||= 0.2
+    self.clamp_time ||= 0.01
+    self.slope_above ||= 0.5
+    self.slope_below ||= 1
+    self.relax_time ||= 0.01
     # Effect    
     self.fx ||= ''
   end
@@ -207,7 +207,45 @@ def listenUnityCommand(id, commands)
       comAttr.attack_level = val[i + 8]
       comAttr.sustain_level = val[i + 9]
       comAttr.decay_level = val[i + 10]
-      comAttr.fx = val[i + 11]
+      comAttr.lpf = val[i + 11]
+      comAttr.lpf_attack = val[i + 12]
+      comAttr.lpf_decay = val[i + 13]
+      comAttr.lpf_sustain = val[i + 14]
+      comAttr.lpf_release = val[i + 15]
+      comAttr.lpf_min= val[i + 16]
+      comAttr.lpf_init_level = val[i + 17]
+      comAttr.lpf_release_level = val[i + 18]
+      comAttr.lpf_sustain_level = val[i + 19]
+      comAttr.lpf_decay_level = val[i + 20]
+      comAttr.lpf_attack_level = val[i + 21]
+      comAttr.lpf_env_curve = val[i + 22]
+      comAttr.hpf = val[i + 23]
+      comAttr.hpf_max = val[i + 24]
+      comAttr.hpf_attack = val[i + 25]
+      comAttr.hpf_decay = val[i + 26]
+      comAttr.hpf_sustain = val[i + 27]
+      comAttr.hpf_release = val[i + 28]
+      comAttr.hpf_init_level = val[i + 29]
+      comAttr.hpf_release_level = val[i + 30]
+      comAttr.hpf_sustain_level = val[i + 31]
+      comAttr.hpf_decay_level = val[i + 32]
+      comAttr.hpf_attack_level = val[i + 33]
+      comAttr.hpf_env_curve = val[i + 34]
+      comAttr.rate = val[i + 35]
+      comAttr.start = val[i + 36]
+      comAttr.finish = val[i + 37]
+      comAttr.norm = val[i + 38]
+      comAttr.pitch = val[i + 39]
+      comAttr.window_size = val[i + 40]
+      comAttr.pitch_dis = val[i + 41]
+      comAttr.time_dis = val[i + 42]
+      comAttr.compress = val[i + 43]
+      comAttr.threshold = val[i + 44]
+      comAttr.clamp_time = val[i + 45]
+      comAttr.slope_above = val[i + 46]
+      comAttr.slope_below = val[i + 47]
+      comAttr.relax_time = val[i + 48]
+      comAttr.fx = val[i + 49]
     else
       comAttr = nil
       puts "ERROR: Unknown action name."

@@ -31,6 +31,8 @@ public class LoopManager : MonoBehaviour
     public GameObject loopContainerGO;
     public LoopBlock initialLoopGO;
     public BlockController blockPF;
+
+    public Canvas canvas;
     
 
     public void RunLoops()

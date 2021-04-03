@@ -61,7 +61,7 @@ public class LoopBlock : MonoBehaviour
         messages.Clear();
         */
         Debug.Log("Sending: " + messages[0].actionName);
-        SonicPiManager.Instance.sendActionMessage(messages[0]);
+        SonicPiManager.instance.sendActionMessage(messages[0]);
         messages.RemoveAt(0);
     }
 
