@@ -6,7 +6,7 @@ public class LoopBlock : MonoBehaviour
 {
     #region Variables
     BlockShape shape;
-    
+
     public GameObject loopContainerGO;
     // Block Prefabs
     public BlockShape sleepBlockPF;
@@ -35,6 +35,7 @@ public class LoopBlock : MonoBehaviour
 
         // Spawn initial Sleep block
         fixedSleepBlock = Instantiate(sleepBlockPF, loopContainerGO.transform);
+        fixedSleepBlock.GetBlockAttributes().SetLoop(this);
         blocks.Add(fixedSleepBlock);
         blockChanges.Add(true);
         blockCount++;
@@ -49,9 +50,8 @@ public class LoopBlock : MonoBehaviour
 
     public void SendActionMessages()
     {
-        /*if (messages.Count <= 0)
-            return;
-        
+
+        /*
         int c = messages.Count;
         for (int i = 0; i < c; i++)
         {
@@ -64,10 +64,17 @@ public class LoopBlock : MonoBehaviour
         for (int i = 0; i < blockChanges.Count; i++)
         {
             if (blockChanges[i])
+            {
                 messages.Add(blocks[i].GetBlockAttributes().GetActionMessage());
+                blockChanges[i] = false;
+            }
         }
 
+        if (messages.Count <= 0)
+            return;
+
         Debug.Log("Sending: " + messages[0].actionName);
+        BlockAttributes ba = fixedSleepBlock.GetBlockAttributes();
         SonicPiManager.instance.sendActionMessage(messages[0]);
         messages.RemoveAt(0);
     }
@@ -95,7 +102,7 @@ public class LoopBlock : MonoBehaviour
     public void AddBlock(string action, int blockId)
     {
         Debug.Log("Adding " + action + " block.");
-     
+
         // Instantiate a block depending on the action
         BlockShape block;
         switch (action)
@@ -137,11 +144,20 @@ public class LoopBlock : MonoBehaviour
 
         // Set its id (-2 because sleep will always be last)
         // TODO: pass the id to this function
-        block.GetBlockAttributes().id = blockCount - 2;
+        block.GetBlockAttributes().SetId(blockCount - 2);
+
+        //TODO: PROVISIONAL!!! Muevo el sleep al final
+        blocks.Remove(fixedSleepBlock);
+        blocks.Add(fixedSleepBlock);
 
         // Update the other blocks indexes
-        for (int i = block.GetBlockAttributes().id + 1; i < blocks.Count - 1; i++)
-            blocks[i].GetBlockAttributes().id++;
+        for (int i = block.GetBlockAttributes().GetBlockId() + 1; i < blocks.Count; i++)
+        {
+            BlockAttributes bAttr = blocks[i].GetBlockAttributes();
+            bAttr.SetId(i);
+            // A message is needed to update the block position in Sonic Pi
+            blockChanges[i] = true;
+        }
     }
 
     public void RemoveBlockAt(int index)

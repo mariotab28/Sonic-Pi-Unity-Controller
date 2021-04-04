@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BlockAttributes : MonoBehaviour
 {
-    public int id;
+    int id;
     public string action;
     
     // The loop containing this block
@@ -33,7 +33,7 @@ public class BlockAttributes : MonoBehaviour
         msg = SonicPiManager.instance.GetMessageTemplate(action);
 
         //TODO: De momento está hardcodeado para pruebas
-        switch (action)
+        /*switch (action)
         {
             case "synth":
                 msg.actionName = action;
@@ -62,7 +62,7 @@ public class BlockAttributes : MonoBehaviour
                 break;
             default:
                 break;
-        }
+        }*/
     }
 
     #endregion
@@ -73,6 +73,8 @@ public class BlockAttributes : MonoBehaviour
         if (msg == null)
             msg = SonicPiManager.instance.GetMessageTemplate(action);
 
+        msg.loopId = loop.loopId;
+        msg.blockId = id;
         // Returns the action message
         return msg;
     }
@@ -88,9 +90,24 @@ public class BlockAttributes : MonoBehaviour
         this.loop = loop;
     }
 
+    public void SetId(int id)
+    {
+        this.id = id;
+    }
+
     public LoopBlock GetLoop()
     {
         return loop;
+    }
+
+    public int GetLoopId()
+    {
+        return loop.loopId;
+    }
+
+    public int GetBlockId()
+    {
+        return id;
     }
 
     #endregion
