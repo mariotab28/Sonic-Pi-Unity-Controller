@@ -1,14 +1,30 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Globalization;
+using TMPro;
 
 public class AttributeInputField : MonoBehaviour
 {
-    public BlockController block;
-    public string attrName = "";
+    BlockAttributes block;
+    string attrName = "";
+
+    [SerializeField]
+    TMPro.TMP_Text placeholderText;
+    [SerializeField]
+    TMPro.TMP_Text nameText;
 
     public void ValueChange(string value)
     {
-        block.EditAttribute(attrName, value);
+        Debug.Log(attrName + " CHANGED TO " + value);
+        block.SetAttribute(attrName, float.Parse(value, CultureInfo.InvariantCulture.NumberFormat));
+    }
+
+    public void Configure(BlockAttributes block, string attrName, float value)
+    {
+        this.block = block;
+        this.attrName = attrName;
+        nameText.text = attrName;
+        placeholderText.text = value.ToString();
     }
 }

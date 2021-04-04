@@ -21,7 +21,7 @@ public class AttributeMenuManager : MonoBehaviour
         if (attrPanel == null)
         {
             attrPanel = Instantiate(attrPanelPF, LoopManager.instance.canvas.transform);
-            attrPanel.Configure(attributes.action, attributes.GetActionMessage().attr);
+            attrPanel.Configure(attributes.action, attributes.GetActionMessage().attrs, attributes);
         }
         else
             attrPanel.gameObject.SetActive(true);

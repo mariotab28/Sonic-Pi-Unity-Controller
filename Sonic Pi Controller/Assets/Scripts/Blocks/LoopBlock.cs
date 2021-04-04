@@ -21,7 +21,8 @@ public class LoopBlock : MonoBehaviour
     int bpm = 60; // Loop's BPM
     string syncedWith = ""; // Name of the loop this loop is synced with (if any)
 
-    List<BlockShape> blocks = new List<BlockShape>(); // List of blocks contained in this loop
+    List<BlockShape> blocks = new List<BlockShape>();   // List of blocks contained in this loop
+    List<bool> blockChanges = new List<bool>();         // List of booleans indicating if the block of the same index has changes
     BlockShape fixedSleepBlock; // The sleep block that must contain the loop unless it is synced
     #endregion
 
@@ -35,9 +36,9 @@ public class LoopBlock : MonoBehaviour
         // Spawn initial Sleep block
         fixedSleepBlock = Instantiate(sleepBlockPF, loopContainerGO.transform);
         blocks.Add(fixedSleepBlock);
+        blockChanges.Add(true);
         blockCount++;
         fixedSleepBlock.AddBottomExtension(shape.color); // Add an extension to the block to indicate hierarchy
-        messages.Add(fixedSleepBlock.GetBlockAttributes().GetActionMessage());
     }
     #endregion
 
@@ -48,9 +49,9 @@ public class LoopBlock : MonoBehaviour
 
     public void SendActionMessages()
     {
-        if (messages.Count <= 0)
+        /*if (messages.Count <= 0)
             return;
-        /*
+        
         int c = messages.Count;
         for (int i = 0; i < c; i++)
         {
@@ -60,9 +61,20 @@ public class LoopBlock : MonoBehaviour
 
         messages.Clear();
         */
+        for (int i = 0; i < blockChanges.Count; i++)
+        {
+            if (blockChanges[i])
+                messages.Add(blocks[i].GetBlockAttributes().GetActionMessage());
+        }
+
         Debug.Log("Sending: " + messages[0].actionName);
         SonicPiManager.instance.sendActionMessage(messages[0]);
         messages.RemoveAt(0);
+    }
+
+    public void SetChangedBlock(int index)
+    {
+        blockChanges[index] = true;
     }
 
     public BlockShape AddSynthBlock()
@@ -118,22 +130,24 @@ public class LoopBlock : MonoBehaviour
         // Move fixed sleep block to end
         fixedSleepBlock.transform.SetAsLastSibling();
 
-        // Add it to the list and increase blockCount
+        // Add it to the list
         blocks.Add(block);
+        blockChanges.Add(true);
         blockCount++;
 
         // Set its id (-2 because sleep will always be last)
-        // TODO: only if not syncing
+        // TODO: pass the id to this function
         block.GetBlockAttributes().id = blockCount - 2;
 
-        // Add the message to the message list for this loop
-        ActionMessage msg = block.GetBlockAttributes().GetActionMessage();
-        messages.Add(msg);
+        // Update the other blocks indexes
+        for (int i = block.GetBlockAttributes().id + 1; i < blocks.Count - 1; i++)
+            blocks[i].GetBlockAttributes().id++;
     }
 
     public void RemoveBlockAt(int index)
     {
         blocks.RemoveAt(index);
+        blockChanges.RemoveAt(index);
 
         for (int i = index; i < blocks.Count; i++)
         {

@@ -16,7 +16,7 @@ public class ActionMessage
     public int loopId = 0;
     public int blockId = 0;
     public string actionName = "";
-    public Dictionary<string, float> attr;
+    public Dictionary<string, float> attrs;
 
     public virtual List<object> ToObjectList()
     {
@@ -50,13 +50,18 @@ public class EditMessage : ActionMessage
 /// </summary>
 public class SleepMessage : ActionMessage
 {
+    public SleepMessage()
+    {
+        actionName = "sleep";
+    }
+
     public override List<object> ToObjectList()
     {
         List<object> list = new List<object>();
         list.Add(loopId);
         list.Add(blockId);
         list.Add(actionName);
-        list.Add(attr["duration"]);
+        list.Add(attrs["duration"]);
         return list;
     }
 }
@@ -66,7 +71,7 @@ public class SleepMessage : ActionMessage
 /// </summary>
 public class PlayerMessage : ActionMessage
 {
-    public string playerName = "";
+    public string playerName = "beep";
     /*public float amp = 1;
     public float pan = 0;
     public float attack = 0;
@@ -85,7 +90,7 @@ public class PlayerMessage : ActionMessage
         list.Add(blockId);
         list.Add(actionName);
         list.Add(playerName);
-        foreach (var attribute in attr.Values)
+        foreach (var attribute in attrs.Values)
             list.Add(attribute);
         /*list.Add(amp);
         list.Add(pan);
@@ -110,6 +115,11 @@ public class SynthMessage : PlayerMessage
     public List<int> notes = new List<int>(new int[] { 52 });
     public string mode = "tick";
 
+    public SynthMessage()
+    {
+        actionName = "synth";
+    }
+
     public override List<object> ToObjectList()
     {
         List<object> list = new List<object>();
@@ -121,7 +131,7 @@ public class SynthMessage : PlayerMessage
         foreach (int note in notes)
             list.Add(note);
         list.Add(mode);
-        foreach (var attribute in attr.Values)
+        foreach (var attribute in attrs.Values)
             list.Add(attribute);
         /*list.Add(amp);
         list.Add(pan);
@@ -143,6 +153,10 @@ public class SynthMessage : PlayerMessage
 public class SampleMessage : PlayerMessage
 {
     // TODO: Atributos específicos
+    public SampleMessage()
+    {
+        actionName = "sample";
+    }
 }
 
 
@@ -222,15 +236,15 @@ public class SonicPiManager : MonoBehaviour
         {
             case "synth":
                 msg = new SynthMessage();
-                msg.attr = GetDictionaryClone(synthDictionary);
+                msg.attrs = GetDictionaryClone(synthDictionary);
                 break;
             case "sample":
-                msg = new PlayerMessage();
-                msg.attr = GetDictionaryClone(sampleDictionary);
+                msg = new SampleMessage();
+                msg.attrs = GetDictionaryClone(sampleDictionary);
                 break;
             case "sleep":
                 msg = new SleepMessage();
-                msg.attr = GetDictionaryClone(sleepDictionary);
+                msg.attrs = GetDictionaryClone(sleepDictionary);
                 break;
             default:
                 break;

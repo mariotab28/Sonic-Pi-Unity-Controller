@@ -2,7 +2,7 @@
 --------------------------------------------------------
 Sonic Pi graphical user interface using Unity
 --------------------------------------------------------
-by Gonzalo Mar�a Cidoncha P�rez and Mario Tabasco Vargas
+by Gonzalo Maria Cidoncha Perez and Mario Tabasco Vargas
 Version 0.0
 '''
 

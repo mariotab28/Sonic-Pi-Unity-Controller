@@ -18,9 +18,6 @@ public class BlockShape : MonoBehaviour
     
     public BottomExtensionManager blockLayoutPF;
 
-    // The loop containing this block
-    public LoopBlock loop;
-
     // Components:
     public Image bodyImage;
     RectTransform rectTransform;
@@ -31,6 +28,9 @@ public class BlockShape : MonoBehaviour
     // List of blockLayouts attached to this block
     List<BottomExtensionManager> attachedBlocks = new List<BottomExtensionManager>();
 
+    // Block Attributes
+    BlockAttributes blockAttributes;
+
     #endregion
 
     #region Initialization
@@ -38,6 +38,7 @@ public class BlockShape : MonoBehaviour
     private void Awake()
     {
         rectTransform = GetComponent<RectTransform>();
+        blockAttributes = GetComponent<BlockAttributes>();
 
         if (fullBodySprite == null || gapBodySprite == null)
         {
@@ -119,17 +120,17 @@ public class BlockShape : MonoBehaviour
 
     public void SetLoop(LoopBlock loop)
     {
-        this.loop = loop;
+        blockAttributes.SetLoop(loop);
     }
 
     public LoopBlock GetLoop()
     {
-        return loop;
+        return blockAttributes.GetLoop();
     }
 
     public BlockAttributes GetBlockAttributes()
     {
-        return GetComponent<BlockAttributes>();
+        return blockAttributes;
     }
     #endregion
 }
