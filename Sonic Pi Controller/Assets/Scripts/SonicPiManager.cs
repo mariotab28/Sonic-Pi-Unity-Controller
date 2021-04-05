@@ -219,6 +219,23 @@ public class SonicPiManager : MonoBehaviour
         return ret;
     }
 
+    public Dictionary<string, float> GetActionDictionary(string action)
+    {
+        switch (action)
+        {
+            case "synth":
+                return GetDictionaryClone(synthDictionary);
+            case "sample":
+                return GetDictionaryClone(sampleDictionary);
+            case "sleep":
+                return GetDictionaryClone(sleepDictionary);
+            case "loop":
+                return GetDictionaryClone(loopDictionary);
+            default:
+                return null;
+        }
+    }
+
     /// <summary>
     /// Creates and initializes a new action message of a specific type
     /// </summary>

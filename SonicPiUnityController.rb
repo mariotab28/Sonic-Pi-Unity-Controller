@@ -154,6 +154,7 @@ def listenUnityCommand(id, commands)
   
   if val[0] == "stop"
     comAttr = SleepAttributes.new("stop", -1)
+    comId = 0
     com = Command.new(0, 0, comAttr)
     puts "Application stopped"
   else
@@ -255,7 +256,7 @@ def listenUnityCommand(id, commands)
     end
     
     # Add the command to command list
-    commands.push(com)
+    commands[comId] = com
   end
   
   '''

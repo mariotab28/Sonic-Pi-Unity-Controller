@@ -1,20 +1,68 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AttributeMenuManager : MonoBehaviour
 {
     public AttributesMenuConfiguration attrPanelPF;
+
+    [SerializeField]
+    AttributeInputField fieldPF;
+
     AttributesMenuConfiguration attrPanel = null;
 
-    BlockAttributes attributes;
+    public BlockAttributes attributes;
+
+    public bool onBlock = false; // if true, configures the fields directly
+    public bool isLoopBlock = false;
+    public Vector2 containerSize = new Vector2(300, 0);
+    public Vector2 containerAnchoredOffset = new Vector2(0, 0);
+    public Vector3 containerScale = new Vector3(1, 1, 1);
 
     private void Start()
     {
-        attributes = GetComponent<BlockAttributes>();
         if (!attributes)
+            attributes = GetComponent<BlockAttributes>();
+        if (!attributes && !isLoopBlock)
             Debug.LogError("Error: Attributes script not found.");
+
+        if (onBlock)
+            SpawnAttributeFieldsOnBlock();
     }
+
+    public void SpawnAttributeFieldsOnBlock()
+    {
+        // Create a cointainer
+        GameObject fieldContainer = new GameObject();
+        fieldContainer.name = "FieldContainer";
+        fieldContainer.transform.parent = gameObject.transform;
+        RectTransform rt = fieldContainer.AddComponent<RectTransform>();
+        rt.sizeDelta = containerSize;
+        rt.anchoredPosition = containerAnchoredOffset;
+        rt.localScale = containerScale;
+        fieldContainer.AddComponent<VerticalLayoutGroup>();
+
+        Vector2 fieldSize = fieldPF.GetComponent<RectTransform>().sizeDelta;
+
+        Dictionary<string, float> attrs;
+        if (!isLoopBlock)
+            attrs = attributes.GetActionMessage().attrs;
+        else
+            attrs = SonicPiManager.instance.GetActionDictionary("loop");
+
+        // Instantiate a field for each attribute and configure the field
+        foreach (KeyValuePair<string, float> attr in attrs)
+        {
+            AttributeInputField field = Instantiate(fieldPF, fieldContainer.transform);
+
+            field.Configure(attributes, attr.Key, attr.Value);
+
+            // Extend the height of the container
+            rt.sizeDelta += new Vector2(0, fieldSize.y);
+        }
+    }
+
 
     public void SpawnAttributeMenu()
     {
