@@ -85,6 +85,13 @@ public class BlockAttributes : MonoBehaviour
         loop.SetChangedBlock(id);
     }
 
+    public void SetPlayer(string playerName)
+    {
+        if (action != "synth" || action != "sample")
+            return;
+        (msg as PlayerMessage).playerName = playerName;
+    }
+
     public void SetLoop(LoopBlock loop)
     {
         this.loop = loop;

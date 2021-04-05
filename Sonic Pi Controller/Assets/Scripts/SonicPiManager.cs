@@ -270,6 +270,12 @@ public class SonicPiManager : MonoBehaviour
         return msg;
     }
 
+    public List<List<string>> GetSampleNames()
+    {
+        return null;
+        //TODO...
+    }
+
     /// <summary>
     /// Sends a message to Sonic Pi containing
     /// </summary>
