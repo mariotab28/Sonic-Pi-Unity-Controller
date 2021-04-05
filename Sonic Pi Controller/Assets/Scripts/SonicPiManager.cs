@@ -272,12 +272,19 @@ public class SonicPiManager : MonoBehaviour
 
     /// <summary>
     /// Sends a message to Sonic Pi containing
-    /// the action's name 
     /// </summary>
     public void sendActionMessage(ActionMessage msg)
     {
         OSCHandler.Instance.SendMessageToClient("SonicPi", "/sonicpi/unity/trigger", msg);
+    }
 
+    /// <summary>
+    /// Sends a list of messages to Sonic Pi
+    /// </summary>
+    public void sendActionMessageGroup(List<ActionMessage> msgList)
+    {
+        OSCHandler.Instance.SendMessageGroupToClient("SonicPi", "/sonicpi/unity/trigger", msgList);
+        
     }
     #endregion
 }

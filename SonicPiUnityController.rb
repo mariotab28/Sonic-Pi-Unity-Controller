@@ -157,109 +157,122 @@ def listenUnityCommand(id, commands)
     comId = 0
     com = Command.new(0, 0, comAttr)
     puts "Application stopped"
-  else
-    # Parse message to Command
-    loopId = val[0]
-    comId = val[1]
-    i = 2
-    puts "Received Command: " + val.to_s
-    case val[i]
-    # ACTION: SLEEP
-    when "sleep"
-      comAttr = SleepAttributes.new(val[i], val[i+1])
-      # ACTION: PLAY SYNTH
-    when "synth"
-      numOfNotes = val[i+2] # Number of notes of the sequence to play
-      notesToPlay = [] # List of notes to play
-      # Add the notes from the message to notesToPlay
-      bi = i + 3 # Index of the beginning of the note sequence
-      ei = i + 3 + numOfNotes - 1 # Index of the end of the note sequence
-      
-      for ni in bi..ei do notesToPlay.push(val[ni]) end
-      
-      pre_i = i
-      i = ei + 1
-      comAttr = SynthAttributes.new()
-      comAttr.action = val[pre_i]
-      comAttr.synth_name = val[pre_i + 1]
-      comAttr.notes = notesToPlay
-      comAttr.mode = val[i]
-      comAttr.amp = val[i + 1]
-      comAttr.pan = val[i + 2]
-      comAttr.attack = val[i + 3]
-      comAttr.sustain = val[i + 4]
-      comAttr.release = val[i + 5]
-      comAttr.decay = val[i + 6]
-      comAttr.attack_level = val[i + 7]
-      comAttr.sustain_level = val[i + 8]
-      comAttr.decay_level = val[i + 9]
-      comAttr.fx = val[i + 10]
-    # SAMPLE
-    when "sample"
-      comAttr = SampleAttributes.new()
-      comAttr.action = val[i]
-      comAttr.sample_name = val[i + 1]
-      comAttr.amp = val[i + 2]
-      comAttr.pan = val[i + 3]
-      comAttr.attack = val[i + 4]
-      comAttr.sustain = val[i + 5]
-      comAttr.release = val[i + 6]
-      comAttr.decay = val[i + 7]
-      comAttr.attack_level = val[i + 8]
-      comAttr.sustain_level = val[i + 9]
-      comAttr.decay_level = val[i + 10]
-      comAttr.lpf = val[i + 11]
-      comAttr.lpf_attack = val[i + 12]
-      comAttr.lpf_decay = val[i + 13]
-      comAttr.lpf_sustain = val[i + 14]
-      comAttr.lpf_release = val[i + 15]
-      comAttr.lpf_min= val[i + 16]
-      comAttr.lpf_init_level = val[i + 17]
-      comAttr.lpf_release_level = val[i + 18]
-      comAttr.lpf_sustain_level = val[i + 19]
-      comAttr.lpf_decay_level = val[i + 20]
-      comAttr.lpf_attack_level = val[i + 21]
-      comAttr.lpf_env_curve = val[i + 22]
-      comAttr.hpf = val[i + 23]
-      comAttr.hpf_max = val[i + 24]
-      comAttr.hpf_attack = val[i + 25]
-      comAttr.hpf_decay = val[i + 26]
-      comAttr.hpf_sustain = val[i + 27]
-      comAttr.hpf_release = val[i + 28]
-      comAttr.hpf_init_level = val[i + 29]
-      comAttr.hpf_release_level = val[i + 30]
-      comAttr.hpf_sustain_level = val[i + 31]
-      comAttr.hpf_decay_level = val[i + 32]
-      comAttr.hpf_attack_level = val[i + 33]
-      comAttr.hpf_env_curve = val[i + 34]
-      comAttr.rate = val[i + 35]
-      comAttr.start = val[i + 36]
-      comAttr.finish = val[i + 37]
-      comAttr.norm = val[i + 38]
-      comAttr.pitch = val[i + 39]
-      comAttr.window_size = val[i + 40]
-      comAttr.pitch_dis = val[i + 41]
-      comAttr.time_dis = val[i + 42]
-      comAttr.compress = val[i + 43]
-      comAttr.threshold = val[i + 44]
-      comAttr.clamp_time = val[i + 45]
-      comAttr.slope_above = val[i + 46]
-      comAttr.slope_below = val[i + 47]
-      comAttr.relax_time = val[i + 48]
-      comAttr.fx = val[i + 49]
-    else
-      comAttr = nil
-      puts "ERROR: Unknown action name."
-    end
-      
-      com = Command.new(loopId, comId, comAttr)
-    end
     
     # Add the command to command list
     commands[comId] = com
+  else
+    # Run through each message received
+    numComs = val[0]
+    a = 0
+    for k in 1..numComs do
+      # Parse message to Command
+      loopId = val[a + 1]
+      if loopId != id 
+          puts "WRONG LOOP!-> " + a.to_s
+        return
+      end
+      comId = val[a + 2]
+      i = a + 3
+      puts "Received Command: " + val[i].to_s + "(" + i.to_s + ")"
+      case val[i]
+      # ACTION: SLEEP
+      when "sleep"
+        comAttr = SleepAttributes.new(val[i], val[i+1])
+        a = a + 1
+        # ACTION: PLAY SYNTH
+      when "synth"
+        numOfNotes = val[i+2] # Number of notes of the sequence to play
+        notesToPlay = [] # List of notes to play
+        # Add the notes from the message to notesToPlay
+        bi = i + 3 # Index of the beginning of the note sequence
+        ei = i + 3 + numOfNotes - 1 # Index of the end of the note sequence
+        
+        for ni in bi..ei do notesToPlay.push(val[ni]) end
+        
+        pre_i = i
+        i = ei + 1
+        comAttr = SynthAttributes.new()
+        comAttr.action = val[pre_i]
+        comAttr.synth_name = val[pre_i + 1]
+        comAttr.notes = notesToPlay
+        comAttr.mode = val[i]
+        comAttr.amp = val[i + 1]
+        comAttr.pan = val[i + 2]
+        comAttr.attack = val[i + 3]
+        comAttr.sustain = val[i + 4]
+        comAttr.release = val[i + 5]
+        comAttr.decay = val[i + 6]
+        comAttr.attack_level = val[i + 7]
+        comAttr.sustain_level = val[i + 8]
+        comAttr.decay_level = val[i + 9]
+        comAttr.fx = val[i + 10]
+        a = a + 16 + numOfNotes
+      # SAMPLE
+      when "sample"
+        comAttr = SampleAttributes.new()
+        comAttr.action = val[i]
+        comAttr.sample_name = val[i + 1]
+        comAttr.amp = val[i + 2]
+        comAttr.pan = val[i + 3]
+        comAttr.attack = val[i + 4]
+        comAttr.sustain = val[i + 5]
+        comAttr.release = val[i + 6]
+        comAttr.decay = val[i + 7]
+        comAttr.attack_level = val[i + 8]
+        comAttr.sustain_level = val[i + 9]
+        comAttr.decay_level = val[i + 10]
+        comAttr.lpf = val[i + 11]
+        comAttr.lpf_attack = val[i + 12]
+        comAttr.lpf_decay = val[i + 13]
+        comAttr.lpf_sustain = val[i + 14]
+        comAttr.lpf_release = val[i + 15]
+        comAttr.lpf_min= val[i + 16]
+        comAttr.lpf_init_level = val[i + 17]
+        comAttr.lpf_release_level = val[i + 18]
+        comAttr.lpf_sustain_level = val[i + 19]
+        comAttr.lpf_decay_level = val[i + 20]
+        comAttr.lpf_attack_level = val[i + 21]
+        comAttr.lpf_env_curve = val[i + 22]
+        comAttr.hpf = val[i + 23]
+        comAttr.hpf_max = val[i + 24]
+        comAttr.hpf_attack = val[i + 25]
+        comAttr.hpf_decay = val[i + 26]
+        comAttr.hpf_sustain = val[i + 27]
+        comAttr.hpf_release = val[i + 28]
+        comAttr.hpf_init_level = val[i + 29]
+        comAttr.hpf_release_level = val[i + 30]
+        comAttr.hpf_sustain_level = val[i + 31]
+        comAttr.hpf_decay_level = val[i + 32]
+        comAttr.hpf_attack_level = val[i + 33]
+        comAttr.hpf_env_curve = val[i + 34]
+        comAttr.rate = val[i + 35]
+        comAttr.start = val[i + 36]
+        comAttr.finish = val[i + 37]
+        comAttr.norm = val[i + 38]
+        comAttr.pitch = val[i + 39]
+        comAttr.window_size = val[i + 40]
+        comAttr.pitch_dis = val[i + 41]
+        comAttr.time_dis = val[i + 42]
+        comAttr.compress = val[i + 43]
+        comAttr.threshold = val[i + 44]
+        comAttr.clamp_time = val[i + 45]
+        comAttr.slope_above = val[i + 46]
+        comAttr.slope_below = val[i + 47]
+        comAttr.relax_time = val[i + 48]
+        comAttr.fx = val[i + 49]
+        a = a + 49 + 3
+      else
+        comAttr = nil
+        puts "ERROR: Unknown action name."
+      end
+        
+        com = Command.new(loopId, comId, comAttr)
+        # Add the command to command list
+        commands[comId] = com
+    end
   end
-  
-  '''
+end
+'''
 Process the command list
 - id: Index of the processing loop
 - commands: The list of commands of the processing loop
@@ -367,12 +380,12 @@ Variables and Initialization of the loop rack
   use_osc "localhost", 4560
   
   # Number of loops listening to Unity commands
-  NUM_LOOPS = 1
+  nLoops = 1
   # Command list
   commands = []
   
   # Command list initialization
-  for i in 0..(NUM_LOOPS - 1)
+  for i in 0..(nLoops - 1)
     puts i
     commands[i] = []
     doListenerLoop(i, commands) # Starts listening loop

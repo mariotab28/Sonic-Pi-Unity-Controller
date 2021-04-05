@@ -73,10 +73,14 @@ public class LoopBlock : MonoBehaviour
         if (messages.Count <= 0)
             return;
 
-        Debug.Log("Sending: " + messages[0].actionName);
-        BlockAttributes ba = fixedSleepBlock.GetBlockAttributes();
-        SonicPiManager.instance.sendActionMessage(messages[0]);
-        messages.RemoveAt(0);
+        Debug.Log("Sending " + messages.Count + " messages.");
+
+        //BlockAttributes ba = fixedSleepBlock.GetBlockAttributes();
+        //SonicPiManager.instance.sendActionMessage(messages[0]);
+
+        SonicPiManager.instance.sendActionMessageGroup(messages);
+        messages.Clear();
+        //messages.RemoveAt(0);
     }
 
     public void SetChangedBlock(int index)

@@ -16,7 +16,6 @@ public class AttributeInputField : MonoBehaviour
 
     public void ValueChange(string value)
     {
-        Debug.Log(attrName + " CHANGED TO " + value);
         block.SetAttribute(attrName, float.Parse(value, CultureInfo.CurrentCulture/* .InvariantCulture.NumberFormat*/));
     }
 
