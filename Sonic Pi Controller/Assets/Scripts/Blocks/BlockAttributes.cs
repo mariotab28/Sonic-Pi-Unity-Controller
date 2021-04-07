@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class BlockAttributes : MonoBehaviour
 {
@@ -16,8 +17,8 @@ public class BlockAttributes : MonoBehaviour
     private void Awake()
     {
         // TODO: PROVISIONAL
-        notes = new List<int>(new int[3] { 60, 65, 67 });
-        numOfNotes = notes.Count;
+        notes = new List<int>();
+        //numOfNotes = notes.Count;
     }
 
     public ActionMessage GetActionMessage()
@@ -62,5 +63,48 @@ public class BlockAttributes : MonoBehaviour
 
         // Returns the action message
         return msg; 
+    }
+
+    public void AddNote(string note)
+    {
+        int num = TranslateNote(note);
+        notes.Add(num);
+        numOfNotes++;
+    }
+
+    //Translate notes from English musical nomenclature to sonic pi's number system
+    int TranslateNote(string note)
+    {
+        int aux = 0;
+        switch(note[0])
+        {
+            case 'C':
+                if (note[1] == '#') aux = 12 * (int.Parse(note[2].ToString()) + 1)+1;
+                else aux = 12 * (int.Parse(note[1].ToString())+1);
+                break;
+            case 'D':
+                if (note[1] == '#') aux = 12 * (int.Parse(note[2].ToString()) + 1)+3;
+                else aux = 12 * (int.Parse(note[1].ToString())+1)+2;
+                break;
+            case 'E':
+                aux = 12 * (int.Parse(note[1].ToString())+1)+4;
+                break;
+            case 'F':
+                if (note[1] == '#') aux = 12 * (int.Parse(note[2].ToString()) + 1)+6;
+                else aux = 12 * (int.Parse(note[1].ToString())+1)+5;
+                break;
+            case 'G':
+                if (note[1] == '#') aux = 12 * (int.Parse(note[2].ToString()) + 1)+8;
+                else aux = 12 * (int.Parse(note[1].ToString())+1)+7;
+                break;
+            case 'A':
+                if (note[1] == '#') aux = 12 * (int.Parse(note[2].ToString()) + 1)+10;
+                else aux = 12 * (int.Parse(note[1].ToString())+1)+9;
+                break;
+            case 'B':
+                aux = 12 * (int.Parse(note[1].ToString())+1)+11;
+                break;
+        }
+        return aux;
     }
 }
