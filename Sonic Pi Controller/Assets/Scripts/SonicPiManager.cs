@@ -1,18 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Newtonsoft.Json;
 
-
-// TODO: Cambiar las clases a ActionAttr, etc. y hacer una clase ActionMessage que tenga: numMsgs y List<ActionAttr> y un método para pasarlo todo a una List<object>
+public enum BlockType
+{
+    LOOP, SYNTH, SAMPLE, SLEEP
+}
 
 /// <summary>
-/// MESSAGE VIRTUAL CLASS
-/// </summary>  
+/// Virtual class for the action messages
+/// </summary>
 public class ActionMessage
 {
     public int loopId = 0;
     public int blockId = 0;
     public string actionName = "";
+    public Dictionary<string, float> attrs;
 
     public virtual List<object> ToObjectList()
     {
@@ -46,7 +50,10 @@ public class EditMessage : ActionMessage
 /// </summary>
 public class SleepMessage : ActionMessage
 {
-    public float sleepDuration = 1.0f;
+    public SleepMessage()
+    {
+        actionName = "sleep";
+    }
 
     public override List<object> ToObjectList()
     {
@@ -54,7 +61,7 @@ public class SleepMessage : ActionMessage
         list.Add(loopId);
         list.Add(blockId);
         list.Add(actionName);
-        list.Add(sleepDuration);
+        list.Add(attrs["duration"]);
         return list;
     }
 }
@@ -64,8 +71,8 @@ public class SleepMessage : ActionMessage
 /// </summary>
 public class PlayerMessage : ActionMessage
 {
-    public string playerName = "";
-    public float amp = 1;
+    public string playerName = "beep";
+    /*public float amp = 1;
     public float pan = 0;
     public float attack = 0;
     public float sustain = 0;
@@ -73,7 +80,7 @@ public class PlayerMessage : ActionMessage
     public float decay = 0;
     public float attack_level = 1;
     public float sustain_level = 1;
-    public float decay_level = 1;
+    public float decay_level = 1;*/
     public string fx = "";
 
     public override List<object> ToObjectList()
@@ -83,7 +90,9 @@ public class PlayerMessage : ActionMessage
         list.Add(blockId);
         list.Add(actionName);
         list.Add(playerName);
-        list.Add(amp);
+        foreach (var attribute in attrs.Values)
+            list.Add(attribute);
+        /*list.Add(amp);
         list.Add(pan);
         list.Add(attack);
         list.Add(sustain);
@@ -91,7 +100,7 @@ public class PlayerMessage : ActionMessage
         list.Add(decay);
         list.Add(attack_level);
         list.Add(sustain_level);
-        list.Add(decay_level);
+        list.Add(decay_level);*/
         list.Add(fx);
         return list;
     }
@@ -106,6 +115,11 @@ public class SynthMessage : PlayerMessage
     public List<int> notes = new List<int>(new int[] { 52 });
     public string mode = "tick";
 
+    public SynthMessage()
+    {
+        actionName = "synth";
+    }
+
     public override List<object> ToObjectList()
     {
         List<object> list = new List<object>();
@@ -117,7 +131,9 @@ public class SynthMessage : PlayerMessage
         foreach (int note in notes)
             list.Add(note);
         list.Add(mode);
-        list.Add(amp);
+        foreach (var attribute in attrs.Values)
+            list.Add(attribute);
+        /*list.Add(amp);
         list.Add(pan);
         list.Add(attack);
         list.Add(sustain);
@@ -125,7 +141,7 @@ public class SynthMessage : PlayerMessage
         list.Add(decay);
         list.Add(attack_level);
         list.Add(sustain_level);
-        list.Add(decay_level);
+        list.Add(decay_level);*/
         list.Add(fx);
         return list;
     }
@@ -137,56 +153,144 @@ public class SynthMessage : PlayerMessage
 public class SampleMessage : PlayerMessage
 {
     // TODO: Atributos específicos
+    public SampleMessage()
+    {
+        actionName = "sample";
+    }
 }
+
+
 
 public class SonicPiManager : MonoBehaviour
 {
-    #region Singleton Constructors
-    static SonicPiManager()
-    {
-    }
+    #region Singleton Variables
 
-    SonicPiManager()
-    {
-    }
+    public static SonicPiManager instance = null;
 
-    public static SonicPiManager Instance
-    {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = new GameObject("SonicPiManager").AddComponent<SonicPiManager>();
-            }
-
-            return _instance;
-        }
-    }
 
     #endregion
 
     #region Member Variables
-    private static SonicPiManager _instance = null;
+
+    public TextAsset synthAttributes;
+    public TextAsset sampleAttributes;
+    public TextAsset sleepAttributes;
+    public TextAsset loopAttributes;
+
+    Dictionary<string, float> synthDictionary;
+    Dictionary<string, float> sampleDictionary;
+    Dictionary<string, float> sleepDictionary;
+    Dictionary<string, float> loopDictionary;
     #endregion
 
     #region Methods
+
     /// <summary>
     /// Initialize OSCHandler
     /// </summary>
-    void Start()
+    void Awake()
     {
+        if (instance != null)
+        {
+            Debug.LogError("Another sonic pi manager found!");
+            DestroyImmediate(gameObject);
+            return;
+        }
+
+        instance = this;
         print("Sonic Pi Manager started.");
         OSCHandler.Instance.Init();
+
+        // Initialize attribute dictionaries
+        synthDictionary = JsonConvert.DeserializeObject<Dictionary<string, float>>(synthAttributes.text);
+        sampleDictionary = JsonConvert.DeserializeObject<Dictionary<string, float>>(sampleAttributes.text);
+        sleepDictionary = JsonConvert.DeserializeObject<Dictionary<string, float>>(sleepAttributes.text);
+        loopDictionary = JsonConvert.DeserializeObject<Dictionary<string, float>>(loopAttributes.text);
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public static Dictionary<TKey, TValue> GetDictionaryClone<TKey, TValue>(Dictionary<TKey, TValue> original)
+    {
+        Dictionary<TKey, TValue> ret = new Dictionary<TKey, TValue>(original.Count,
+                                                                original.Comparer);
+        foreach (KeyValuePair<TKey, TValue> entry in original)
+            ret.Add(entry.Key, entry.Value);
+
+        return ret;
+    }
+
+    public Dictionary<string, float> GetActionDictionary(string action)
+    {
+        switch (action)
+        {
+            case "synth":
+                return GetDictionaryClone(synthDictionary);
+            case "sample":
+                return GetDictionaryClone(sampleDictionary);
+            case "sleep":
+                return GetDictionaryClone(sleepDictionary);
+            case "loop":
+                return GetDictionaryClone(loopDictionary);
+            default:
+                return null;
+        }
+    }
+
+    /// <summary>
+    /// Creates and initializes a new action message of a specific type
+    /// </summary>
+    /// <param name="action">
+    /// The type of the block which determines the message attributes
+    /// </param>
+    /// <returns>
+    /// An ActionMessage with the default attributes of the block's type
+    /// </returns>
+    public ActionMessage GetMessageTemplate(string action)
+    {
+        ActionMessage msg = null;
+
+        switch (action)
+        {
+            case "synth":
+                msg = new SynthMessage();
+                msg.attrs = GetDictionaryClone(synthDictionary);
+                break;
+            case "sample":
+                msg = new SampleMessage();
+                msg.attrs = GetDictionaryClone(sampleDictionary);
+                break;
+            case "sleep":
+                msg = new SleepMessage();
+                msg.attrs = GetDictionaryClone(sleepDictionary);
+                break;
+            default:
+                break;
+        }
+
+        return msg;
+    }
+
+    public List<List<string>> GetSampleNames()
+    {
+        return null;
+        //TODO...
     }
 
     /// <summary>
     /// Sends a message to Sonic Pi containing
-    /// the action's name 
     /// </summary>
     public void sendActionMessage(ActionMessage msg)
     {
         OSCHandler.Instance.SendMessageToClient("SonicPi", "/sonicpi/unity/trigger", msg);
+    }
 
+    /// <summary>
+    /// Sends a list of messages to Sonic Pi
+    /// </summary>
+    public void sendActionMessageGroup(List<ActionMessage> msgList)
+    {
+        OSCHandler.Instance.SendMessageGroupToClient("SonicPi", "/sonicpi/unity/trigger", msgList);
+        
     }
     #endregion
 }

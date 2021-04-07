@@ -886,6 +886,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d3cdc44250512d43b0ec557103e3127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  synthAttributes: {fileID: 4900000, guid: 5068ce16fe0e1174eb8472bf7f287dfc, type: 3}
+  sampleAttributes: {fileID: 4900000, guid: 326d50fe722253842af6e238bdf0929f, type: 3}
+  sleepAttributes: {fileID: 4900000, guid: ea93ad324d14ff745b152dd161992af1, type: 3}
+  loopAttributes: {fileID: 4900000, guid: 18fe61a09ef390745bdfbd1ca2b006e2, type: 3}
 --- !u!4 &578547697
 Transform:
   m_ObjectHideFlags: 0
@@ -1840,6 +1844,7 @@ MonoBehaviour:
   loopContainerGO: {fileID: 630067287}
   initialLoopGO: {fileID: 587831421}
   blockPF: {fileID: 4718891190000842059, guid: 470581cb6b009704ba5ad3f670beba64, type: 3}
+  canvas: {fileID: 1401106931}
 --- !u!4 &1255730783
 Transform:
   m_ObjectHideFlags: 0

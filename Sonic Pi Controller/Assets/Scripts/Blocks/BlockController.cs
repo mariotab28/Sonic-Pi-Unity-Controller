@@ -28,7 +28,7 @@ public class BlockController : MonoBehaviour
         ActionMessage msg = null;
 
         //TODO: De momento está hardcodeado para pruebas
-        switch (action)
+        /*switch (action)
         {
             case "synth":
                 msg = new SynthMessage();
@@ -60,7 +60,7 @@ public class BlockController : MonoBehaviour
                 break;
             default:
                 break;
-        }
+        }*/
 
         // Sends the action message
         return msg; //SonicPiManager.Instance.sendActionMessage(msg);
