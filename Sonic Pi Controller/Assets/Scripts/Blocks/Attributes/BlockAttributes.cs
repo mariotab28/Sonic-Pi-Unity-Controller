@@ -14,18 +14,9 @@ public class BlockAttributes : MonoBehaviour
     //  - It contains the index of the block and its loop, the name of its action and a dictionary of attributes
     ActionMessage msg;
 
-    // TODO: PROVISIONAL
-    List<int> notes = new List<int>(); // List of notes to be played 
-    int numOfNotes = 0; // Number of notes
-    string mode = "tick"; // Notes play mode
 
     #region Initialization
-    private void Awake()
-    {
-        // TODO: PROVISIONAL
-        notes = new List<int>(new int[3] { 60, 65, 67 });
-        numOfNotes = notes.Count;
-    }
+    
 
     private void Start()
     {
@@ -118,4 +109,6 @@ public class BlockAttributes : MonoBehaviour
     }
 
     #endregion
+
+    
 }
