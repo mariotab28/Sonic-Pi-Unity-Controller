@@ -6,6 +6,11 @@ public class NoteSelector : MonoBehaviour
 {
     NoteMenuManager noteMenu;
 
+    Transform list;
+
+    [SerializeField]
+    Note notePF;
+
     // List of note buttons (NoteUpdater objects)
     List<NoteUpdater> noteButtons = new List<NoteUpdater>();
 
@@ -44,14 +49,17 @@ public class NoteSelector : MonoBehaviour
         return octave_;
     }
 
-    public void Configure(NoteMenuManager noteMenu)
+    public void Configure(NoteMenuManager noteMenu, Transform listTF)
     {
         this.noteMenu = noteMenu;
+        list = listTF;
     }
 
     public void AddNote(string note)
     {
         noteMenu.AddNote(note);
+        Note newnote = Instantiate(notePF, list);
+        newnote.SetIndex(noteMenu, note);
     }
 
 }

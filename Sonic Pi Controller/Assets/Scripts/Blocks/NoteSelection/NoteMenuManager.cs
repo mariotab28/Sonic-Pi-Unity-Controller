@@ -6,6 +6,8 @@ public class NoteMenuManager : MonoBehaviour
 {
     [SerializeField]
     NoteSelector notePanelPF;
+
+    public Transform list;
     
     BlockAttributes attributes;
     NoteSelector notePanel;
@@ -38,12 +40,18 @@ public class NoteMenuManager : MonoBehaviour
             // Moves the panel on top of the UI and to the center of the screen
             notePanel.transform.SetAsLastSibling();
             notePanel.transform.localPosition = new Vector3(0, 0, 0);
-            notePanel.Configure(this);
+            notePanel.Configure(this, list);
         }
         else
             notePanel.gameObject.SetActive(true);
         
     }
+
+    public int GetNoteCount()
+    {
+        return notes.Count;
+    }
+
 
     #region Note Selection Methods
     public void AddNote(string note)
@@ -52,6 +60,15 @@ public class NoteMenuManager : MonoBehaviour
         ActionMessage msg = attributes.GetActionMessage();
         (msg as SynthMessage).notes.Add(num);
         (msg as SynthMessage).numOfNotes++;
+
+        notes = (msg as SynthMessage).notes;
+        numOfNotes = (msg as SynthMessage).numOfNotes;
+    }
+    public void RemoveNote(int index)
+    {
+        ActionMessage msg = attributes.GetActionMessage();
+        (msg as SynthMessage).notes.RemoveAt(index);
+        (msg as SynthMessage).numOfNotes--;
 
         notes = (msg as SynthMessage).notes;
         numOfNotes = (msg as SynthMessage).numOfNotes;
