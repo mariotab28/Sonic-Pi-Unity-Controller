@@ -278,14 +278,15 @@ Process the command list
 - commands: The list of commands of the processing loop
 '''
   def processCommands(id, commands)
+    slept = false
     # Processes each command from the command list in order
     commands.each do |com|
       puts "Processing: " + com.com_attr.action.to_s
-      
       case com.com_attr.action
       # ACTION: SLEEP
       when "sleep"
 	sleep com.com_attr.sleep_duration
+        slept = true
 	# ACTION: PLAY SYNTH
       when "synth"
 	use_synth com.com_attr.synth_name
@@ -298,7 +299,6 @@ Process the command list
 	else
             puts "Error: Unknown synth play mode."
 	end
-
         if com.com_attr.fx != ''
 	  with_fx com.com_attr.fx do
               play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
@@ -335,7 +335,10 @@ Process the command list
 	puts "ERROR: Unknown command name. Can't process command."
       end
     end
-    sleep 0.5 # Needs to sleep at least 0.01
+    # Check if there is one sleep at the end
+    if !slept
+      sleep 0.5 # Needs to sleep at least 0.01
+    end
   end
   
   

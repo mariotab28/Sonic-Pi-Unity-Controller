@@ -9,10 +9,8 @@ public class AttributeInputField : MonoBehaviour
     BlockAttributes block;
     string attrName = "";
 
-    [SerializeField]
-    TMPro.TMP_Text placeholderText;
-    [SerializeField]
-    TMPro.TMP_Text nameText;
+    [SerializeField] TMPro.TMP_Text placeholderText;
+    [SerializeField] TMPro.TMP_Text nameText;
 
     public void ValueChange(string value)
     {

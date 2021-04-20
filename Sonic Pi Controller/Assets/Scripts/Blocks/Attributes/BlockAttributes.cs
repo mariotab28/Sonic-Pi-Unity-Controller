@@ -12,13 +12,13 @@ public class BlockAttributes : MonoBehaviour
 
     // Message for the block
     //  - It contains the index of the block and its loop, the name of its action and a dictionary of attributes
-    ActionMessage msg;
+    protected ActionMessage msg;
 
 
     #region Initialization
     
 
-    private void Start()
+    protected virtual void Start()
     {
         // Creates the message object
         msg = SonicPiManager.instance.GetMessageTemplate(action);
@@ -74,13 +74,6 @@ public class BlockAttributes : MonoBehaviour
     {
         msg.attrs[attr] = value;
         loop.SetChangedBlock(id);
-    }
-
-    public void SetPlayer(string playerName)
-    {
-        if (action != "synth" || action != "sample")
-            return;
-        (msg as PlayerMessage).playerName = playerName;
     }
 
     public void SetLoop(LoopBlock loop)

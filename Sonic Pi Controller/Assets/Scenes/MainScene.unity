@@ -890,6 +890,7 @@ MonoBehaviour:
   sampleAttributes: {fileID: 4900000, guid: 326d50fe722253842af6e238bdf0929f, type: 3}
   sleepAttributes: {fileID: 4900000, guid: ea93ad324d14ff745b152dd161992af1, type: 3}
   loopAttributes: {fileID: 4900000, guid: 18fe61a09ef390745bdfbd1ca2b006e2, type: 3}
+  sampleNamesFile: {fileID: 4900000, guid: 7790c9bc16aba33408654a62a36bfe8d, type: 3}
 --- !u!4 &578547697
 Transform:
   m_ObjectHideFlags: 0
