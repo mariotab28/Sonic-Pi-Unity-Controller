@@ -180,9 +180,10 @@ public class SonicPiManager : MonoBehaviour
     Dictionary<string, float> loopDictionary;
 
     // Lists of samples and synth types (instruments)
-    [SerializeField]
-    TextAsset sampleNamesFile;
+    [SerializeField] TextAsset sampleNamesFile;
     List<List<string>> sampleNames;
+    [SerializeField] TextAsset instrumentNamesFile;
+    List<string> instrumentNames;
 
     #endregion
 
@@ -212,6 +213,7 @@ public class SonicPiManager : MonoBehaviour
 
         // Initialize list of samples and instruments
         sampleNames = JsonConvert.DeserializeObject<List<List<string>>>(sampleNamesFile.text);
+        instrumentNames = JsonConvert.DeserializeObject<List<string>>(instrumentNamesFile.text);
 
         DontDestroyOnLoad(gameObject);
     }
@@ -280,6 +282,11 @@ public class SonicPiManager : MonoBehaviour
     public List<List<string>> GetSampleNames()
     {
         return sampleNames;
+    }
+
+    public List<string> GetInstrumentNames()
+    {
+        return instrumentNames;
     }
 
     /// <summary>

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BlockAttributes : MonoBehaviour
 {
-    int id;
+    protected int id;
     public string action;
     
     // The loop containing this block

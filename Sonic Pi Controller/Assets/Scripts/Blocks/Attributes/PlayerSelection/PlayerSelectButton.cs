@@ -10,7 +10,7 @@ public class PlayerSelectButton : MonoBehaviour
     string playerName;
     [SerializeField] TMPro.TMP_Text nameText;
 
-    public void Configure(SampleSelectionPanel panel, PlayerBlockAttributes bAttr, string playerName)
+    public void Configure(PlayerSelectionPanel panel, PlayerBlockAttributes bAttr, string playerName)
     {
         this.bAttr = bAttr;
         this.playerName = playerName;

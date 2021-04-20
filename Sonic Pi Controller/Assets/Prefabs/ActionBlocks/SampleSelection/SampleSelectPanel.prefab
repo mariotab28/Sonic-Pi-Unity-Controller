@@ -278,6 +278,18 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
+      - m_Target: {fileID: 819801257558187627}
+        m_TargetAssemblyTypeName: UnityEngine.GameObject, UnityEngine
+        m_MethodName: SetActive
+        m_Mode: 6
+        m_Arguments:
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
+          m_IntArgument: 0
+          m_FloatArgument: 0
+          m_StringArgument: 
+          m_BoolArgument: 0
+        m_CallState: 2
 --- !u!1 &819801257558187627
 GameObject:
   m_ObjectHideFlags: 0
@@ -527,9 +539,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fffaeff66a05acb49a7470568998e0ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  categoryButtonPF: {fileID: 8694938946199410102, guid: 2e08b249c9419a64b98a98bd78ab6f92, type: 3}
-  sampleButtonPF: {fileID: 5352327862696666653, guid: 6f3ff408ee5b67b4090a156a0a54ef9f, type: 3}
+  playerButtonPF: {fileID: 5352327862696666653, guid: 6f3ff408ee5b67b4090a156a0a54ef9f, type: 3}
   buttonContainer: {fileID: 6014278179285378416}
+  categoryButtonPF: {fileID: 8694938946199410102, guid: 2e08b249c9419a64b98a98bd78ab6f92, type: 3}
   backButton: {fileID: 819801257558187627}
 --- !u!1 &1624762398165814276
 GameObject:

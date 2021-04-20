@@ -5,8 +5,8 @@ using TMPro;
 
 public class PlayerBlockAttributes : BlockAttributes
 {
-    [SerializeField] SampleSelectionPanel playerSelectionPanelPF; // TODO: Generalize player selection
-    private SampleSelectionPanel playerSelectionPanel;
+    [SerializeField] PlayerSelectionPanel playerSelectionPanelPF; // TODO: Generalize player selection
+    private PlayerSelectionPanel playerSelectionPanel;
 
     [SerializeField] TMP_Text playerNameText;
 
@@ -24,6 +24,8 @@ public class PlayerBlockAttributes : BlockAttributes
         (msg as PlayerMessage).playerName = playerName; // Set player name
         playerNameText.text = playerName; // Update player name text
         HidePanel();
+
+        loop.SetChangedBlock(id);
     }
 
     public void ShowPanel()
@@ -41,10 +43,8 @@ public class PlayerBlockAttributes : BlockAttributes
             HidePanel();
             return;
         }
-
-        playerSelectionPanel.gameObject.transform.localPosition = new Vector3(0, 0, 0);
-        playerSelectionPanel.ShowCategoryButtons();
-        playerSelectionPanel.gameObject.SetActive(true);
+        
+        playerSelectionPanel.Show();
     }
 
     public void HidePanel()

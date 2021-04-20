@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SampleSelectionPanel : MonoBehaviour
+public class SampleSelectionPanel : PlayerSelectionPanel
 {
     List<List<string>> samples; // List of lists of sample names
 
@@ -10,16 +10,11 @@ public class SampleSelectionPanel : MonoBehaviour
     List<List<GameObject>> sampleButtons; // sample select buttons
 
     [SerializeField] SampleCategoryButton categoryButtonPF;
-    [SerializeField] PlayerSelectButton sampleButtonPF;
-
-    [SerializeField] GameObject buttonContainer;
     [SerializeField] GameObject backButton;
-
-    PlayerBlockAttributes blockAttributes;
 
     int selectedCategoryIndex = -1;
 
-    public void Configure(PlayerBlockAttributes blockAttributes)
+    public override void Configure(PlayerBlockAttributes blockAttributes)
     {
         this.blockAttributes = blockAttributes;
         // Ask for the names of the samples and categories
@@ -39,12 +34,12 @@ public class SampleSelectionPanel : MonoBehaviour
             // Create category button
             categoryButtons.Add(CreateCategoryButton(categoryIndex, category[0]));
             categoryIndex++;
-            category.RemoveAt(0); // Remove the first name, which corresponds to the name of the category
+            List<string> categorySamples = category.GetRange(1, category.Count - 1); // Remove the first name, which corresponds to the name of the category
 
             // Create sample buttons
             List<GameObject> auxButtonList = new List<GameObject>();
-            foreach (string sampleName in category)
-                auxButtonList.Add(CreateSampleButton(sampleName));
+            foreach (string sampleName in categorySamples)
+                auxButtonList.Add(CreatePlayerButton(sampleName));
             sampleButtons.Add(auxButtonList);
         }
     }
@@ -59,18 +54,6 @@ public class SampleSelectionPanel : MonoBehaviour
 
         categoryButton.gameObject.SetActive(false);
         return categoryButton.gameObject;
-    }
-
-    GameObject CreateSampleButton(string sampleName)
-    {
-        // Instantiate sample button
-        PlayerSelectButton sampleButton = Instantiate(sampleButtonPF, buttonContainer.transform);
-
-        // Configure sample button
-        sampleButton.Configure(this, blockAttributes, sampleName);
-
-        sampleButton.gameObject.SetActive(false);
-        return sampleButton.gameObject;
     }
 
     public void CategorySelect(int index)
@@ -106,5 +89,10 @@ public class SampleSelectionPanel : MonoBehaviour
             sampleButton.SetActive(false);
 
         selectedCategoryIndex = -1;
+    }
+
+    public override void ShowButtons()
+    {
+        ShowCategoryButtons();
     }
 }
