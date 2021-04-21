@@ -13,6 +13,7 @@ public class NoteMenuManager : MonoBehaviour
     Note notePF;
 
     NoteSelector notePanel;
+    public Dropdown modeDropdown_;
 
     public Transform list;
     
@@ -37,6 +38,13 @@ public class NoteMenuManager : MonoBehaviour
         msg.numOfNotes = 0;
         numOfNotes = msg.numOfNotes;
         mode = msg.mode;
+    }
+
+    public void ChangeMode()
+    {
+        mode = modeDropdown_.options[modeDropdown_.value].text;
+        SynthMessage msg = (attributes.GetActionMessage() as SynthMessage);
+        msg.mode = mode;
     }
 
     public void SpawnNotePanel(int note, Text noteText)
