@@ -24,6 +24,8 @@ public class NoteSelector : MonoBehaviour
         UpdateButtonsOctave();
     }
 
+    public int GetIndex() { return noteIndex_; }
+
     public void AddNoteButton(NoteUpdater noteButton)
     {
         noteButtons.Add(noteButton);

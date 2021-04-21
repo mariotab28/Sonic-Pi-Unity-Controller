@@ -34,6 +34,7 @@ public class NoteMenuManager : MonoBehaviour
     {
         SynthMessage msg = (attributes.GetActionMessage() as SynthMessage);
         notes = msg.notes;
+        msg.numOfNotes = 0;
         numOfNotes = msg.numOfNotes;
         mode = msg.mode;
     }
@@ -51,9 +52,17 @@ public class NoteMenuManager : MonoBehaviour
                 notePanel.Configure(this, list, note, noteText);
             }
             else
+            {
                 notePanel.gameObject.SetActive(true);
+                notePanel.Configure(this, list, note, noteText);
+            }
         }
-        else notePanel.gameObject.SetActive(false);
+        else
+        {
+            if(note == notePanel.GetIndex())
+                notePanel.gameObject.SetActive(false);
+            else notePanel.Configure(this, list, note, noteText);
+        }
         instantiated = !instantiated;
     }
 
