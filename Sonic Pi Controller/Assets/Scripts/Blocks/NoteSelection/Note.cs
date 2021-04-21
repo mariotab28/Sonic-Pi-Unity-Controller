@@ -19,6 +19,6 @@ public class Note : MonoBehaviour
     {
         GetComponentInChildren<Text>().text = note;
         noteManager_ = notemenu;
-        index_ = noteManager_.GetNoteCount();
+        index_ = noteManager_.GetNoteCount()-1;
     }
 }

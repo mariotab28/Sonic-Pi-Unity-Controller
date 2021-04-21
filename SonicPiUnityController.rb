@@ -21,7 +21,7 @@ SynthAttributes = Struct.new :action, :synth_name, :notes, :mode, :amp, :pan,
     super
     self.action ||= 'synth'
     self.synth_name ||= 'beep'
-    self.notes ||= [52]
+    self.notes ||= []
     self.mode ||= 'tick'
     self.amp ||= 1
     self.pan ||= 0

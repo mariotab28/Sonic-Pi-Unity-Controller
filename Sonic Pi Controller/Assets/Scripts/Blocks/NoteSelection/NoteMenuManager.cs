@@ -6,6 +6,7 @@ public class NoteMenuManager : MonoBehaviour
 {
     [SerializeField]
     NoteSelector notePanelPF;
+    bool instantiated = false;
 
     public Transform list;
     
@@ -34,17 +35,21 @@ public class NoteMenuManager : MonoBehaviour
 
     public void SpawnNotePanel()
     {
-        if (!notePanel)
+        if (!instantiated)
         {
-            notePanel = Instantiate(notePanelPF, LoopManager.instance.canvas.transform);
-            // Moves the panel on top of the UI and to the center of the screen
-            notePanel.transform.SetAsLastSibling();
-            notePanel.transform.localPosition = new Vector3(0, 0, 0);
-            notePanel.Configure(this, list);
+            if (!notePanel)
+            {
+                notePanel = Instantiate(notePanelPF, LoopManager.instance.canvas.transform);
+                // Moves the panel on top of the UI and to the center of the screen
+                notePanel.transform.SetAsLastSibling();
+                notePanel.transform.localPosition = new Vector3(0, 0, 0);
+                notePanel.Configure(this, list);
+            }
+            else
+                notePanel.gameObject.SetActive(true);
         }
-        else
-            notePanel.gameObject.SetActive(true);
-        
+        else notePanel.gameObject.SetActive(false);
+        instantiated = !instantiated;
     }
 
     public int GetNoteCount()
