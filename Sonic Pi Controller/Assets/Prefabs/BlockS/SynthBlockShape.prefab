@@ -267,7 +267,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7411351493314137388}
         m_TargetAssemblyTypeName: NoteMenuManager, Assembly-CSharp
-        m_MethodName: SpawnNotePanel
+        m_MethodName: SpawnNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1559,6 +1559,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   notePanelPF: {fileID: 4373756552136186093, guid: 86dead4dc40485f449d7281f64a64d90, type: 3}
+  notePF: {fileID: 2786915017260855609, guid: f09bafadadc5f0543815bf6943f09d82, type: 3}
   list: {fileID: 8484508764472010691}
 --- !u!1001 &2577343447126963329
 PrefabInstance:

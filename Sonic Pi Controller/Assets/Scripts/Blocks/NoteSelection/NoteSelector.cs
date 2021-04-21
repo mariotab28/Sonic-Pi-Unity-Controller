@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NoteSelector : MonoBehaviour
 {
     NoteMenuManager noteMenu;
 
     Transform list;
+    Text noteText_;
 
     [SerializeField]
     Note notePF;
@@ -15,6 +17,7 @@ public class NoteSelector : MonoBehaviour
     List<NoteUpdater> noteButtons = new List<NoteUpdater>();
 
     int octave_ = 4;
+    int noteIndex_ = 0;
 
     void Start()
     {
@@ -49,10 +52,12 @@ public class NoteSelector : MonoBehaviour
         return octave_;
     }
 
-    public void Configure(NoteMenuManager noteMenu, Transform listTF)
+    public void Configure(NoteMenuManager noteMenu, Transform listTF, int note, Text noteText)
     {
         this.noteMenu = noteMenu;
         list = listTF;
+        noteIndex_ = note;
+        noteText_ = noteText;
     }
 
     public void AddNote(string note)
@@ -60,6 +65,12 @@ public class NoteSelector : MonoBehaviour
         noteMenu.AddNote(note);
         Note newnote = Instantiate(notePF, list);
         newnote.SetIndex(noteMenu, note);
+    }
+
+    public void ChangeNote(string note)
+    {
+        noteText_.text = note;
+        noteMenu.ChangeNote(noteIndex_, note);
     }
 
 }

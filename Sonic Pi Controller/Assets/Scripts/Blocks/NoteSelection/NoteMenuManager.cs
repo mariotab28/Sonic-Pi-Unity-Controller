@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class NoteMenuManager : MonoBehaviour
 {
@@ -8,10 +9,14 @@ public class NoteMenuManager : MonoBehaviour
     NoteSelector notePanelPF;
     bool instantiated = false;
 
+    [SerializeField]
+    Note notePF;
+
+    NoteSelector notePanel;
+
     public Transform list;
     
     BlockAttributes attributes;
-    NoteSelector notePanel;
 
     List<int> notes;        // List of notes to be played 
     int numOfNotes = 0;     // Number of notes
@@ -33,7 +38,7 @@ public class NoteMenuManager : MonoBehaviour
         mode = msg.mode;
     }
 
-    public void SpawnNotePanel()
+    public void SpawnNotePanel(int note, Text noteText)
     {
         if (!instantiated)
         {
@@ -43,7 +48,7 @@ public class NoteMenuManager : MonoBehaviour
                 // Moves the panel on top of the UI and to the center of the screen
                 notePanel.transform.SetAsLastSibling();
                 notePanel.transform.localPosition = new Vector3(0, 0, 0);
-                notePanel.Configure(this, list);
+                notePanel.Configure(this, list, note, noteText);
             }
             else
                 notePanel.gameObject.SetActive(true);
@@ -59,6 +64,14 @@ public class NoteMenuManager : MonoBehaviour
 
 
     #region Note Selection Methods
+
+
+    public void SpawnNote()
+    {
+        AddNote("C4");
+        Note newnote = Instantiate(notePF, list);
+        newnote.SetIndex(this, "C4");
+    }
     public void AddNote(string note)
     {
         int num = TranslateNote(note);
@@ -74,6 +87,16 @@ public class NoteMenuManager : MonoBehaviour
         ActionMessage msg = attributes.GetActionMessage();
         (msg as SynthMessage).notes.RemoveAt(index);
         (msg as SynthMessage).numOfNotes--;
+
+        notes = (msg as SynthMessage).notes;
+        numOfNotes = (msg as SynthMessage).numOfNotes;
+    }
+
+    public void ChangeNote(int index, string note)
+    {
+        int num = TranslateNote(note);
+        ActionMessage msg = attributes.GetActionMessage();
+        (msg as SynthMessage).notes[index] = num;
 
         notes = (msg as SynthMessage).notes;
         numOfNotes = (msg as SynthMessage).numOfNotes;

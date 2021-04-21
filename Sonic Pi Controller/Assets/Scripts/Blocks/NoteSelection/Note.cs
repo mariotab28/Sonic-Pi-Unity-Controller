@@ -9,16 +9,16 @@ public class Note : MonoBehaviour
 
     NoteMenuManager noteManager_;
 
-    public void RemoveNote()
-    {
-        noteManager_.RemoveNote(index_);
-        Destroy(gameObject);
-    }
-
     public void SetIndex(NoteMenuManager notemenu, string note)
     {
         GetComponentInChildren<Text>().text = note;
         noteManager_ = notemenu;
         index_ = noteManager_.GetNoteCount()-1;
     }
+
+    public void SpawnPanel()
+    {
+        noteManager_.SpawnNotePanel(index_, GetComponentInChildren<Text>());
+    }
+    
 }

@@ -123,7 +123,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2786915017260855609}
         m_TargetAssemblyTypeName: Note, Assembly-CSharp
-        m_MethodName: RemoveNote
+        m_MethodName: SpawnPanel
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -145,7 +145,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e8a0954e2ece9014bb8a5a7c9c7cfc6d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  noteManager_: {fileID: 0}
+  index_: 0
 --- !u!1 &5369294568108202239
 GameObject:
   m_ObjectHideFlags: 0
