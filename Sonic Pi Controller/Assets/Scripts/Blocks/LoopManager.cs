@@ -68,6 +68,12 @@ public class LoopManager : MonoBehaviour
         loops[loopId].AddBlock(action, blockId);
     }
 
+    // Change the position of a block inside its loop
+    public void ChangeBlockPosition(int loopId, BlockShape block, int newBlockId)
+    {
+        loops[loopId].ChangeBlockPosition(block, newBlockId);
+    }
+
     public void AddMessage(int loopId, ActionMessage message)
     {
         loops[loopId].AddMessage(message);

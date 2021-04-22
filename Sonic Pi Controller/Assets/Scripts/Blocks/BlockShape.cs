@@ -75,6 +75,11 @@ public class BlockShape : MonoBehaviour
         edgeIMG.gameObject.SetActive(edge);
     }
 
+    public bool HasEdge()
+    {
+        return edgeIMG.gameObject.activeSelf;
+    }
+
     public void SetHighlighted(bool highlight)
     {
         edgeIMG.color = highlight ? edgeHighlightColor : edgeColor;
@@ -106,8 +111,28 @@ public class BlockShape : MonoBehaviour
     public void AddBottomExtension(Color bottomColor)
     {
         foreach (BottomExtensionManager block in attachedBlocks)
-        {
             block.AddBottomExtension(bottomColor);
+    }
+
+    // Returns a list of the colors of the bottom extensions
+    public List<Color> GetBottomColors()
+    {
+        return attachedBlocks[0].GetBottomColors();
+    }
+
+    // Set the bottom extensions to the list of colors received
+    public void SetBottomColors(List<Color> colors)
+    {
+        foreach (BottomExtensionManager block in attachedBlocks)
+            block.UpdateBottomExtensions(colors);
+    }
+
+    // Removes all bottom extensions
+    public void RemoveBottomExtensions()
+    {
+        foreach (BottomExtensionManager block in attachedBlocks)
+        {
+            block.RemoveBottomExtensions();
         }
     }
 
@@ -124,6 +149,13 @@ public class BlockShape : MonoBehaviour
     public Color GetColor()
     {
         return color;
+    }
+
+    // Enable/disables the abbility to drag and move the block
+    public void SetDraggable(bool canDrag)
+    {
+        DragToMove dragC = GetComponent<DragToMove>();
+        if(dragC) dragC.enabled = canDrag;
     }
     #endregion
 

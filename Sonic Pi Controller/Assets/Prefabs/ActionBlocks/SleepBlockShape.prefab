@@ -13,9 +13,12 @@ GameObject:
   - component: {fileID: 4599360814131339020}
   - component: {fileID: 1117204471172155015}
   - component: {fileID: 6804417190521459727}
+  - component: {fileID: 7204884397697075853}
+  - component: {fileID: 4026675009200108760}
+  - component: {fileID: 630261686403630021}
   m_Layer: 5
   m_Name: SleepBlockShape
-  m_TagString: Untagged
+  m_TagString: block
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -116,6 +119,42 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   blockAttributes: {fileID: 1117204471172155015}
   shape: {fileID: 4599360814131339020}
+--- !u!114 &7204884397697075853
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3261212137624868219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc613552a905bf6429ec547d58b43413, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!225 &4026675009200108760
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3261212137624868219}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
+--- !u!114 &630261686403630021
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3261212137624868219}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1f7c92355cfe98444b0d378c515cdacb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &6748589206902866642
 GameObject:
   m_ObjectHideFlags: 0

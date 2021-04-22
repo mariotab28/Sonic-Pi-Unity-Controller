@@ -40,6 +40,7 @@ public class LoopBlock : MonoBehaviour
         // Spawn initial Sleep block
         fixedSleepBlock = Instantiate(sleepBlockPF, loopContainerGO.transform);
         fixedSleepBlock.GetBlockAttributes().SetLoop(this);
+        fixedSleepBlock.SetDraggable(false);
         blocks.Add(fixedSleepBlock);
         blockChanges.Add(true);
         blockCount++;
@@ -107,6 +108,7 @@ public class LoopBlock : MonoBehaviour
         return Instantiate(sleepBlockPF, loopContainerGO.transform);
     }
 
+    // Instantiate a block of a specific action and adds it to the loop
     public void AddBlock(string action, int blockId)
     {
         Debug.Log("Adding " + action + " block.");
@@ -125,10 +127,16 @@ public class LoopBlock : MonoBehaviour
                 block = AddSleepBlock();
                 break;
             default:
-                Debug.LogError("Unknown action. Can't create block.");
+                Debug.LogError("Unknown action \"" + action + "\". Can't create block.");
                 return;
         }
 
+        AddBlock(block, blockId);
+    }
+
+    // Adds a block to the loop
+    public void AddBlock(BlockShape block, int blockId)
+    {
         // Move the block to its corresponding position (+1 to skip loop block)
         block.transform.SetSiblingIndex(blockId + 1);
 
@@ -154,10 +162,6 @@ public class LoopBlock : MonoBehaviour
         // TODO: pass the id to this function
         block.GetBlockAttributes().SetId(blockId);
 
-        //TODO: PROVISIONAL!!! Muevo el sleep al final
-        //blocks.Remove(fixedSleepBlock);
-        //blocks.Add(fixedSleepBlock);
-
         // Update the other blocks indexes
         for (int i = block.GetBlockAttributes().GetBlockId() + 1; i < blocks.Count; i++)
         {
@@ -166,6 +170,14 @@ public class LoopBlock : MonoBehaviour
             // A message is needed to update the block position in Sonic Pi
             blockChanges[i] = true;
         }
+
+        foreach (BlockShape blockShape in blocks)
+        {
+            BlockAttributes attributes = blockShape.GetBlockAttributes();
+            Transform t = blockShape.transform;
+            t.SetSiblingIndex(attributes.GetBlockId() + 1);
+        }
+
         /*foreach (var b in blocks)
         {
             Debug.Log(b.GetBlockAttributes().GetBlockId() +": "+ b.GetBlockAttributes().GetActionMessage().actionName + "\n");
@@ -180,16 +192,20 @@ public class LoopBlock : MonoBehaviour
 
         for (int i = index; i < blocks.Count; i++)
         {
-            //blocks[i].id--;
+            BlockAttributes battr = blocks[i].GetBlockAttributes();
+            battr.SetId(battr.GetBlockId() - 1);
+            blockChanges[i] = true;
         }
         blockCount--;
     }
 
-
-    /*
-    public void UndoMessage(ActionMessage msg)
+    public void ChangeBlockPosition(BlockShape block, int newIndex)
     {
-        messages.RemoveAt();
+        int prevIndex = block.GetBlockAttributes().GetBlockId();
+        RemoveBlockAt(block.GetBlockAttributes().GetBlockId());
+        block.transform.SetParent(loopContainerGO.transform);
+        AddBlock(block, newIndex);
+        Debug.Log("Moved from " + prevIndex + " to " + newIndex);
     }
-    */
+
 }

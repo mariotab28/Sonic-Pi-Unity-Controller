@@ -27,6 +27,7 @@ public class BottomExtensionManager : MonoBehaviour
         // Reset bottom extensions
         foreach (Image ext in bottomExtensions)
             Destroy(ext.gameObject);
+        bottomExtensions.Clear();
 
         // Add a Bottom Block
         foreach (Color parentColor in parentColors)
@@ -41,5 +42,11 @@ public class BottomExtensionManager : MonoBehaviour
             colors.Add(image.color);
 
         return colors;
+    }
+
+    // Remove all bottom extensions
+    public void RemoveBottomExtensions()
+    {
+        UpdateBottomExtensions(new List<Color>());
     }
 }
