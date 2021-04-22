@@ -1310,6 +1310,7 @@ GameObject:
   - component: {fileID: 6876474673967591183}
   - component: {fileID: 7411351493314137388}
   - component: {fileID: 2002973710974901011}
+  - component: {fileID: 2333212786014246522}
   m_Layer: 5
   m_Name: SynthBlockShape
   m_TagString: Untagged
@@ -1380,7 +1381,8 @@ MonoBehaviour:
   hasGap: 1
   fullBodySprite: {fileID: 21300000, guid: fb9d271e16b0ea049b241efa9188d680, type: 3}
   gapBodySprite: {fileID: 21300000, guid: 57c6570f12f1f8d4e8237d618526cac2, type: 3}
-  edgeGO: {fileID: 6398880937481036778}
+  edgeIMG: {fileID: 6398880937481036778}
+  edgeHighlightColor: {r: 0.16862746, g: 1, b: 0, a: 1}
   mainBlock: {fileID: 7038760792751421449}
   blockLayoutPF: {fileID: -4437695380082406264, guid: 651d34d58b9c8b147a731eb7e3cfde29, type: 3}
   bodyImage: {fileID: 6260813436432849190}
@@ -1433,6 +1435,20 @@ MonoBehaviour:
   loop: {fileID: 0}
   playerSelectionPanelPF: {fileID: 7794123542149838175, guid: b338790bddb6cc0499b0286545f3de47, type: 3}
   playerNameText: {fileID: 5676887463742129738}
+--- !u!114 &2333212786014246522
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8777412006816331262}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 81d0ec74c298e864a9ba0d1192706ee0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  blockAttributes: {fileID: 2002973710974901011}
+  shape: {fileID: 7735408263625047945}
 --- !u!1001 &2577343447126963329
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1546,6 +1562,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 651d34d58b9c8b147a731eb7e3cfde29, type: 3}
+--- !u!224 &6626664853691900971 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 8661042923639525546, guid: 651d34d58b9c8b147a731eb7e3cfde29, type: 3}
+  m_PrefabInstance: {fileID: 2577343447126963329}
+  m_PrefabAsset: {fileID: 0}
 --- !u!114 &7038760792751421449 stripped
 MonoBehaviour:
   m_CorrespondingSourceObject: {fileID: -4437695380082406264, guid: 651d34d58b9c8b147a731eb7e3cfde29, type: 3}
@@ -1573,8 +1594,3 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!224 &6626664853691900971 stripped
-RectTransform:
-  m_CorrespondingSourceObject: {fileID: 8661042923639525546, guid: 651d34d58b9c8b147a731eb7e3cfde29, type: 3}
-  m_PrefabInstance: {fileID: 2577343447126963329}
-  m_PrefabAsset: {fileID: 0}

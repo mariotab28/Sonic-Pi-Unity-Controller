@@ -6,6 +6,7 @@ public class LoopBlock : MonoBehaviour
 {
     #region Variables
     BlockShape shape;
+    BlockAttributes attributes;
 
     public GameObject loopContainerGO;
     // Block Prefabs
@@ -31,7 +32,10 @@ public class LoopBlock : MonoBehaviour
     {
         shape = GetComponent<BlockShape>();
         shape.SetColor(new Color(Random.Range(0.4f, 1f), Random.Range(0.4f, 1f), Random.Range(0.4f, 1f)));
-        shape.AddBottomExtension(shape.color);
+        shape.AddBottomExtension(shape.GetColor());
+
+        attributes = GetComponent<BlockAttributes>();
+        attributes.SetId(-1); // Set block ID to -1 por loops
 
         // Spawn initial Sleep block
         fixedSleepBlock = Instantiate(sleepBlockPF, loopContainerGO.transform);
@@ -39,7 +43,7 @@ public class LoopBlock : MonoBehaviour
         blocks.Add(fixedSleepBlock);
         blockChanges.Add(true);
         blockCount++;
-        fixedSleepBlock.AddBottomExtension(shape.color); // Add an extension to the block to indicate hierarchy
+        fixedSleepBlock.AddBottomExtension(shape.GetColor()); // Add an extension to the block to indicate hierarchy
     }
     #endregion
 
@@ -125,34 +129,34 @@ public class LoopBlock : MonoBehaviour
                 return;
         }
 
-        // Move the block to its corresponding position 
-        block.transform.SetSiblingIndex(blockId);
+        // Move the block to its corresponding position (+1 to skip loop block)
+        block.transform.SetSiblingIndex(blockId + 1);
 
         // Assing the block loop to this loop
         block.SetLoop(this);
 
         // Activate the edge of the new block
-        // TODO: unless it is last block
+        // TODO: unless it is last block (only when loop is synced)
         block.SetEdge(true);
 
         // Add bottom extension
-        block.AddBottomExtension(shape.color);
+        block.AddBottomExtension(shape.GetColor());
 
         // Move fixed sleep block to end
         fixedSleepBlock.transform.SetAsLastSibling();
 
         // Add it to the list
-        blocks.Add(block);
-        blockChanges.Add(true);
+        blocks.Insert(blockId, block);
+        blockChanges.Insert(blockId, true);
         blockCount++;
 
         // Set its id (-2 because sleep will always be last)
         // TODO: pass the id to this function
-        block.GetBlockAttributes().SetId(blockCount - 2);
+        block.GetBlockAttributes().SetId(blockId);
 
         //TODO: PROVISIONAL!!! Muevo el sleep al final
-        blocks.Remove(fixedSleepBlock);
-        blocks.Add(fixedSleepBlock);
+        //blocks.Remove(fixedSleepBlock);
+        //blocks.Add(fixedSleepBlock);
 
         // Update the other blocks indexes
         for (int i = block.GetBlockAttributes().GetBlockId() + 1; i < blocks.Count; i++)
@@ -162,6 +166,11 @@ public class LoopBlock : MonoBehaviour
             // A message is needed to update the block position in Sonic Pi
             blockChanges[i] = true;
         }
+        /*foreach (var b in blocks)
+        {
+            Debug.Log(b.GetBlockAttributes().GetBlockId() +": "+ b.GetBlockAttributes().GetActionMessage().actionName + "\n");
+        }
+        Debug.Log("\n");*/
     }
 
     public void RemoveBlockAt(int index)

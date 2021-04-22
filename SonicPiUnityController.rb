@@ -178,7 +178,7 @@ def listenUnityCommand(id, commands)
       # ACTION: SLEEP
       when "sleep"
         comAttr = SleepAttributes.new(val[i], val[i+1])
-        a = a + 1
+        a = i + 1
         # ACTION: PLAY SYNTH
       when "synth"
         numOfNotes = val[i+2] # Number of notes of the sequence to play

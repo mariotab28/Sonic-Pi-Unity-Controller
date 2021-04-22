@@ -3158,6 +3158,22 @@ PrefabInstance:
       propertyPath: m_AnchoredPosition.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 5905956884215189416, guid: 1d359eef88707c24b8fb546b1baad93d, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5905956884215189416, guid: 1d359eef88707c24b8fb546b1baad93d, type: 3}
+      propertyPath: m_AnchorMin.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5905956884215189416, guid: 1d359eef88707c24b8fb546b1baad93d, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5905956884215189416, guid: 1d359eef88707c24b8fb546b1baad93d, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6155613645764104666, guid: 1d359eef88707c24b8fb546b1baad93d, type: 3}
       propertyPath: m_Name
       value: LoopBlockContainer

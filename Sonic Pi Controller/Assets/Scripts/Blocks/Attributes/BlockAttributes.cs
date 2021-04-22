@@ -8,7 +8,7 @@ public class BlockAttributes : MonoBehaviour
     public string action;
     
     // The loop containing this block
-    public LoopBlock loop;
+    [SerializeField] protected LoopBlock loop;
 
     // Message for the block
     //  - It contains the index of the block and its loop, the name of its action and a dictionary of attributes
