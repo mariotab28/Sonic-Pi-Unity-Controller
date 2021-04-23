@@ -7,19 +7,23 @@ public class BlockShape : MonoBehaviour
 {
     #region Variables
 
-    public Color color = Color.white;
+    [SerializeField] Color color = Color.white;
 
-    public bool hasGap = false;
-    public Sprite fullBodySprite;
-    public Sprite gapBodySprite;
+    [SerializeField] bool hasGap = false;
+    [SerializeField] Sprite fullBodySprite;
+    [SerializeField] Sprite gapBodySprite;
 
-    public Image edgeGO;
-    public BottomExtensionManager mainBlock;
+    [SerializeField] Image edgeIMG;
+    [SerializeField] Color edgeHighlightColor;
+    Color edgeColor;
+
+
+    [SerializeField] BottomExtensionManager mainBlock;
     
-    public BottomExtensionManager blockLayoutPF;
+    [SerializeField] BottomExtensionManager blockLayoutPF;
 
     // Components:
-    public Image bodyImage;
+    [SerializeField] Image bodyImage;
     RectTransform rectTransform;
 
     // List of parent block colors
@@ -68,7 +72,17 @@ public class BlockShape : MonoBehaviour
     // Activates the edge at the right of the block
     public void SetEdge(bool edge)
     {
-        edgeGO.gameObject.SetActive(edge);
+        edgeIMG.gameObject.SetActive(edge);
+    }
+
+    public bool HasEdge()
+    {
+        return edgeIMG.gameObject.activeSelf;
+    }
+
+    public void SetHighlighted(bool highlight)
+    {
+        edgeIMG.color = highlight ? edgeHighlightColor : edgeColor;
     }
 
     // Adds another block object to extend the current block
@@ -79,7 +93,7 @@ public class BlockShape : MonoBehaviour
         // change color
 
         // Move the edge to the end
-        edgeGO.transform.SetAsLastSibling();
+        edgeIMG.transform.SetAsLastSibling();
 
         // Add block layout to the list
         attachedBlocks.Add(b);
@@ -97,14 +111,29 @@ public class BlockShape : MonoBehaviour
     public void AddBottomExtension(Color bottomColor)
     {
         foreach (BottomExtensionManager block in attachedBlocks)
-        {
             block.AddBottomExtension(bottomColor);
-        }
     }
 
-    public void Test()
+    // Returns a list of the colors of the bottom extensions
+    public List<Color> GetBottomColors()
     {
-        AddBottomExtension(new Color(Random.Range(0.4f,1f), Random.Range(0.4f, 1f), Random.Range(0.4f, 1f)));
+        return attachedBlocks[0].GetBottomColors();
+    }
+
+    // Set the bottom extensions to the list of colors received
+    public void SetBottomColors(List<Color> colors)
+    {
+        foreach (BottomExtensionManager block in attachedBlocks)
+            block.UpdateBottomExtensions(colors);
+    }
+
+    // Removes all bottom extensions
+    public void RemoveBottomExtensions()
+    {
+        foreach (BottomExtensionManager block in attachedBlocks)
+        {
+            block.RemoveBottomExtensions();
+        }
     }
 
     // Sets the color of the elements of the block
@@ -112,7 +141,28 @@ public class BlockShape : MonoBehaviour
     {
         this.color = color;
         bodyImage.color = color;
-        edgeGO.color = color;
+        edgeIMG.color = color;
+        edgeColor = color;
+    }
+
+    // Get the color of the block
+    public Color GetColor()
+    {
+        return color;
+    }
+
+    // Enable/disables the abbility to drag and move the block
+    public void SetDraggable(bool canDrag)
+    {
+        DragToMove dragC = GetComponent<DragToMove>();
+        if(dragC) dragC.enabled = canDrag;
+    }
+
+    // Enable/disables the abbility to split from the loop
+    public void SetSplitable(bool canSplit)
+    {
+        SplitBlockOnDrag splitC = GetComponent<SplitBlockOnDrag>();
+        if (splitC) splitC.enabled = canSplit;
     }
     #endregion
 

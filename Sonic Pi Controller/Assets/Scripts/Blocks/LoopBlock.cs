@@ -6,6 +6,7 @@ public class LoopBlock : MonoBehaviour
 {
     #region Variables
     BlockShape shape;
+    BlockAttributes attributes;
 
     public GameObject loopContainerGO;
     // Block Prefabs
@@ -31,15 +32,20 @@ public class LoopBlock : MonoBehaviour
     {
         shape = GetComponent<BlockShape>();
         shape.SetColor(new Color(Random.Range(0.4f, 1f), Random.Range(0.4f, 1f), Random.Range(0.4f, 1f)));
-        shape.AddBottomExtension(shape.color);
+        shape.AddBottomExtension(shape.GetColor());
+
+        attributes = GetComponent<BlockAttributes>();
+        attributes.SetId(-1); // Set block ID to -1 por loops
 
         // Spawn initial Sleep block
         fixedSleepBlock = Instantiate(sleepBlockPF, loopContainerGO.transform);
         fixedSleepBlock.GetBlockAttributes().SetLoop(this);
+        fixedSleepBlock.SetDraggable(false);
+        fixedSleepBlock.SetSplitable(false);
         blocks.Add(fixedSleepBlock);
         blockChanges.Add(true);
         blockCount++;
-        fixedSleepBlock.AddBottomExtension(shape.color); // Add an extension to the block to indicate hierarchy
+        fixedSleepBlock.AddBottomExtension(shape.GetColor()); // Add an extension to the block to indicate hierarchy
     }
     #endregion
 
@@ -103,6 +109,7 @@ public class LoopBlock : MonoBehaviour
         return Instantiate(sleepBlockPF, loopContainerGO.transform);
     }
 
+    // Instantiate a block of a specific action and adds it to the loop
     public void AddBlock(string action, int blockId)
     {
         Debug.Log("Adding " + action + " block.");
@@ -121,38 +128,40 @@ public class LoopBlock : MonoBehaviour
                 block = AddSleepBlock();
                 break;
             default:
-                Debug.LogError("Unknown action. Can't create block.");
+                Debug.LogError("Unknown action \"" + action + "\". Can't create block.");
                 return;
         }
 
-        // Move the block to its corresponding position 
-        block.transform.SetSiblingIndex(blockId);
+        AddBlock(block, blockId);
+    }
+
+    // Adds a block to the loop
+    public void AddBlock(BlockShape block, int blockId)
+    {
+        // Move the block to its corresponding position (+1 to skip loop block)
+        block.transform.SetSiblingIndex(blockId + 1);
 
         // Assing the block loop to this loop
         block.SetLoop(this);
 
         // Activate the edge of the new block
-        // TODO: unless it is last block
+        // TODO: unless it is last block (only when loop is synced)
         block.SetEdge(true);
 
         // Add bottom extension
-        block.AddBottomExtension(shape.color);
+        block.AddBottomExtension(shape.GetColor());
 
         // Move fixed sleep block to end
         fixedSleepBlock.transform.SetAsLastSibling();
 
         // Add it to the list
-        blocks.Add(block);
-        blockChanges.Add(true);
+        blocks.Insert(blockId, block);
+        blockChanges.Insert(blockId, true);
         blockCount++;
 
         // Set its id (-2 because sleep will always be last)
         // TODO: pass the id to this function
-        block.GetBlockAttributes().SetId(blockCount - 2);
-
-        //TODO: PROVISIONAL!!! Muevo el sleep al final
-        blocks.Remove(fixedSleepBlock);
-        blocks.Add(fixedSleepBlock);
+        block.GetBlockAttributes().SetId(blockId);
 
         // Update the other blocks indexes
         for (int i = block.GetBlockAttributes().GetBlockId() + 1; i < blocks.Count; i++)
@@ -162,6 +171,19 @@ public class LoopBlock : MonoBehaviour
             // A message is needed to update the block position in Sonic Pi
             blockChanges[i] = true;
         }
+
+        foreach (BlockShape blockShape in blocks)
+        {
+            BlockAttributes attributes = blockShape.GetBlockAttributes();
+            Transform t = blockShape.transform;
+            t.SetSiblingIndex(attributes.GetBlockId() + 1);
+        }
+
+        /*foreach (var b in blocks)
+        {
+            Debug.Log(b.GetBlockAttributes().GetBlockId() +": "+ b.GetBlockAttributes().GetActionMessage().actionName + "\n");
+        }
+        Debug.Log("\n");*/
     }
 
     public void RemoveBlockAt(int index)
@@ -171,16 +193,20 @@ public class LoopBlock : MonoBehaviour
 
         for (int i = index; i < blocks.Count; i++)
         {
-            //blocks[i].id--;
+            BlockAttributes battr = blocks[i].GetBlockAttributes();
+            battr.SetId(battr.GetBlockId() - 1);
+            blockChanges[i] = true;
         }
         blockCount--;
     }
 
-
-    /*
-    public void UndoMessage(ActionMessage msg)
+    public void ChangeBlockPosition(BlockShape block, int newIndex)
     {
-        messages.RemoveAt();
+        int prevIndex = block.GetBlockAttributes().GetBlockId();
+        RemoveBlockAt(block.GetBlockAttributes().GetBlockId());
+        block.transform.SetParent(loopContainerGO.transform);
+        AddBlock(block, newIndex);
+        Debug.Log("Moved from " + prevIndex + " to " + newIndex);
     }
-    */
+
 }

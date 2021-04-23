@@ -281,7 +281,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7420305128749591142}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -509,7 +509,6 @@ GameObject:
   - component: {fileID: 8197775398594693549}
   - component: {fileID: 8361627579723468564}
   - component: {fileID: 4373756552136186093}
-  - component: {fileID: 633375870480336581}
   - component: {fileID: 4912674065664231417}
   m_Layer: 5
   m_Name: NotesPanel
@@ -590,18 +589,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4132f8edd512480428b282d67a3968a7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &633375870480336581
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2050837902205346738}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd7e27378e5a5244badc27d4d553bcee, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  notePF: {fileID: 2786915017260855609, guid: b3942fd889d1f9a448c61edd81ac12d3, type: 3}
 --- !u!225 &4912674065664231417
 CanvasGroup:
   m_ObjectHideFlags: 0
@@ -816,7 +804,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6540879537843702050}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1041,7 +1029,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2101870533296879606}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1187,7 +1175,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7306364920995262789}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1412,7 +1400,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 6860553660670242837}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1558,7 +1546,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 585679220564214584}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1968,7 +1956,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 5499393387949126476}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2272,7 +2260,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 7398334740423986420}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2418,7 +2406,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 2033625095860920856}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2643,7 +2631,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4089243344660823008}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2947,7 +2935,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 4557973958402796682}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3330,7 +3318,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 8205019941281690409}
         m_TargetAssemblyTypeName: NoteUpdater, Assembly-CSharp
-        m_MethodName: AddNote
+        m_MethodName: ChangeNote
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

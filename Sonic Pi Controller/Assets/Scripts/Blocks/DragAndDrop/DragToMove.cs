@@ -5,14 +5,32 @@ using UnityEngine.EventSystems;
 
 public class DragToMove : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
+    LoopBlock loop;
     Canvas canvas;
-
-    Vector2 initialPos;
-
+    BlockAttributes blockAttributes;
+    BlockShape shape;
+    BlockDropHandler dropHandler;
     RectTransform rectTransform;
     CanvasGroup canvasGroup;
 
+    Vector2 initialPos;
+
     bool drag = false;
+
+    private void Awake()
+    {
+        blockAttributes = GetComponent<BlockAttributes>();
+        shape = GetComponent<BlockShape>();
+        dropHandler = GetComponent<BlockDropHandler>();
+        rectTransform = GetComponent<RectTransform>();
+        canvasGroup = GetComponent<CanvasGroup>();
+        canvas = LoopManager.instance.canvas;
+    }
+
+    private void Start()
+    {
+        loop = blockAttributes.GetLoop();
+    }
 
     private void Update()
     {
@@ -22,20 +40,15 @@ public class DragToMove : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
         }
     }
 
-    void Awake()
-    {
-        rectTransform = GetComponent<RectTransform>();
-        canvasGroup = GetComponent<CanvasGroup>();
-
-        canvas = LoopManager.instance.canvas;
-    }
-
     public void OnBeginDrag(PointerEventData eventData)
     {
         initialPos = rectTransform.anchoredPosition;
         drag = true;
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = .5f;
+
+        if (CompareTag("block"))
+            LoopManager.instance.SetDestroyZone(true);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -47,10 +60,13 @@ public class DragToMove : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
     public void OnEndDrag(PointerEventData eventData)
     {
         //Debug.Log("DRAGGIN ENDS!");
-        //rectTransform.anchoredPosition = initialPos;
+        rectTransform.anchoredPosition = initialPos;
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1.0f;
         drag = false;
+
+        if (CompareTag("block"))
+            LoopManager.instance.SetDestroyZone(false);
     }
 
     public void OnPointerDown(PointerEventData eventData)

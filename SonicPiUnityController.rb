@@ -178,7 +178,7 @@ def listenUnityCommand(id, commands)
       # ACTION: SLEEP
       when "sleep"
         comAttr = SleepAttributes.new(val[i], val[i+1])
-        a = a + 1
+        a = i + 1
         # ACTION: PLAY SYNTH
       when "synth"
         numOfNotes = val[i+2] # Number of notes of the sequence to play
@@ -278,40 +278,42 @@ Process the command list
 - commands: The list of commands of the processing loop
 '''
   def processCommands(id, commands)
+    slept = false
     # Processes each command from the command list in order
     commands.each do |com|
       puts "Processing: " + com.com_attr.action.to_s
-      
       case com.com_attr.action
       # ACTION: SLEEP
       when "sleep"
 	sleep com.com_attr.sleep_duration
+        slept = true
 	# ACTION: PLAY SYNTH
       when "synth"
-	use_synth com.com_attr.synth_name
-        if com.com_attr.mode == 'tick' then
-            tickNote = com.com_attr.notes.tick
-	elsif com.com_attr.mode == 'chord' then
-            tickNote = com.com_attr.notes
-        elsif com.com_attr.mode == 'choose' then
-            tickNote = com.com_attr.notes.choose
-	else
-            puts "Error: Unknown synth play mode."
-	end
-
-        if com.com_attr.fx != ''
-	  with_fx com.com_attr.fx do
-              play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
-                attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
-                decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
-                decay_level: com.com_attr.decay_level
-	  end
-	else
-            play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
-              attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
-              decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
-              decay_level: com.com_attr.decay_level
-	end
+            if com.com_attr.notes.count > 0
+              use_synth com.com_attr.synth_name
+              if com.com_attr.mode == 'tick' then
+                tickNote = com.com_attr.notes.tick
+              elsif com.com_attr.mode == 'chord' then
+                tickNote = com.com_attr.notes
+              elsif com.com_attr.mode == 'choose' then
+                tickNote = com.com_attr.notes.choose
+              else
+                puts "Error: Unknown synth play mode."
+              end
+              if com.com_attr.fx != ''
+                with_fx com.com_attr.fx do
+                  play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
+                    attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
+                    decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
+                    decay_level: com.com_attr.decay_level
+                end
+              else
+                play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
+                  attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
+                  decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
+                  decay_level: com.com_attr.decay_level
+              end
+            end
 	# ACTION: PLAY SAMPLE
       when "sample"
 	if com.com_attr.fx != ''
@@ -321,7 +323,7 @@ Process the command list
 	  end
 	else
 	  sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
-              attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level
+              attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level, pitch: com.com_attr.pitch
 	end
 	
 	''' TODO: RESTO DE ATRIBUTOS '''
@@ -335,7 +337,10 @@ Process the command list
 	puts "ERROR: Unknown command name. Can't process command."
       end
     end
-    sleep 0.5 # Needs to sleep at least 0.01
+    # Check if there is one sleep at the end
+    if !slept
+      sleep 0.5 # Needs to sleep at least 0.01
+    end
   end
   
   

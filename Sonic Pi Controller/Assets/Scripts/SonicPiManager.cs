@@ -112,7 +112,7 @@ public class PlayerMessage : ActionMessage
 public class SynthMessage : PlayerMessage
 {
     public int numOfNotes = 1;
-    public List<int> notes = new List<int>(new int[] { 52 });
+    public List<int> notes = new List<int>(new int[] {  });
     public string mode = "tick";
 
     public SynthMessage()
@@ -133,15 +133,6 @@ public class SynthMessage : PlayerMessage
         list.Add(mode);
         foreach (var attribute in attrs.Values)
             list.Add(attribute);
-        /*list.Add(amp);
-        list.Add(pan);
-        list.Add(attack);
-        list.Add(sustain);
-        list.Add(release);
-        list.Add(decay);
-        list.Add(attack_level);
-        list.Add(sustain_level);
-        list.Add(decay_level);*/
         list.Add(fx);
         return list;
     }
@@ -156,6 +147,7 @@ public class SampleMessage : PlayerMessage
     public SampleMessage()
     {
         actionName = "sample";
+        playerName = "drum_heavy_kick";
     }
 }
 
@@ -172,15 +164,27 @@ public class SonicPiManager : MonoBehaviour
 
     #region Member Variables
 
-    public TextAsset synthAttributes;
-    public TextAsset sampleAttributes;
-    public TextAsset sleepAttributes;
-    public TextAsset loopAttributes;
+    // Block attribute dictionaries
+    [SerializeField]
+    TextAsset synthAttributes;
+    [SerializeField]
+    TextAsset sampleAttributes;
+    [SerializeField]
+    TextAsset sleepAttributes;
+    [SerializeField]
+    TextAsset loopAttributes;
 
     Dictionary<string, float> synthDictionary;
     Dictionary<string, float> sampleDictionary;
     Dictionary<string, float> sleepDictionary;
     Dictionary<string, float> loopDictionary;
+
+    // Lists of samples and synth types (instruments)
+    [SerializeField] TextAsset sampleNamesFile;
+    List<List<string>> sampleNames;
+    [SerializeField] TextAsset instrumentNamesFile;
+    List<string> instrumentNames;
+
     #endregion
 
     #region Methods
@@ -206,6 +210,11 @@ public class SonicPiManager : MonoBehaviour
         sampleDictionary = JsonConvert.DeserializeObject<Dictionary<string, float>>(sampleAttributes.text);
         sleepDictionary = JsonConvert.DeserializeObject<Dictionary<string, float>>(sleepAttributes.text);
         loopDictionary = JsonConvert.DeserializeObject<Dictionary<string, float>>(loopAttributes.text);
+
+        // Initialize list of samples and instruments
+        sampleNames = JsonConvert.DeserializeObject<List<List<string>>>(sampleNamesFile.text);
+        instrumentNames = JsonConvert.DeserializeObject<List<string>>(instrumentNamesFile.text);
+
         DontDestroyOnLoad(gameObject);
     }
 
@@ -272,8 +281,12 @@ public class SonicPiManager : MonoBehaviour
 
     public List<List<string>> GetSampleNames()
     {
-        return null;
-        //TODO...
+        return sampleNames;
+    }
+
+    public List<string> GetInstrumentNames()
+    {
+        return instrumentNames;
     }
 
     /// <summary>
@@ -290,7 +303,7 @@ public class SonicPiManager : MonoBehaviour
     public void sendActionMessageGroup(List<ActionMessage> msgList)
     {
         OSCHandler.Instance.SendMessageGroupToClient("SonicPi", "/sonicpi/unity/trigger", msgList);
-        
+
     }
     #endregion
 }

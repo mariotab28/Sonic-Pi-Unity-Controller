@@ -8,6 +8,7 @@ TagManager:
   - sample
   - sleep
   - loop
+  - block
   layers:
   - Default
   - TransparentFX
