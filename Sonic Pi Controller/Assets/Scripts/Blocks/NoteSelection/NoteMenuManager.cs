@@ -40,13 +40,6 @@ public class NoteMenuManager : MonoBehaviour
         mode = msg.mode;
     }
 
-    public void ChangeMode()
-    {
-        mode = modeDropdown_.options[modeDropdown_.value].text;
-        SynthMessage msg = (attributes.GetActionMessage() as SynthMessage);
-        msg.mode = mode;
-    }
-
     public void SpawnNotePanel(int note, Text noteText)
     {
         if (!instantiated)
@@ -89,6 +82,7 @@ public class NoteMenuManager : MonoBehaviour
         Note newnote = Instantiate(notePF, list);
         newnote.SetIndex(this, "C4");
     }
+
     public void AddNote(string note)
     {
         int num = TranslateNote(note);
@@ -98,7 +92,10 @@ public class NoteMenuManager : MonoBehaviour
 
         notes = (msg as SynthMessage).notes;
         numOfNotes = (msg as SynthMessage).numOfNotes;
+
+        attributes.GetLoop().SetChangedBlock(attributes.GetBlockId());
     }
+
     public void RemoveNote(int index)
     {
         ActionMessage msg = attributes.GetActionMessage();
@@ -117,6 +114,17 @@ public class NoteMenuManager : MonoBehaviour
 
         notes = (msg as SynthMessage).notes;
         numOfNotes = (msg as SynthMessage).numOfNotes;
+
+        attributes.GetLoop().SetChangedBlock(attributes.GetBlockId());
+    }
+
+    public void ChangeMode()
+    {
+        mode = modeDropdown_.options[modeDropdown_.value].text;
+        SynthMessage msg = (attributes.GetActionMessage() as SynthMessage);
+        msg.mode = mode;
+
+        attributes.GetLoop().SetChangedBlock(attributes.GetBlockId());
     }
 
     //Translate notes from English musical nomenclature to sonic pi's number system
