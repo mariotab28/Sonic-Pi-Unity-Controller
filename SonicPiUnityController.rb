@@ -289,29 +289,31 @@ Process the command list
         slept = true
 	# ACTION: PLAY SYNTH
       when "synth"
-	use_synth com.com_attr.synth_name
-        if com.com_attr.mode == 'tick' then
-            tickNote = com.com_attr.notes.tick
-	elsif com.com_attr.mode == 'chord' then
-            tickNote = com.com_attr.notes
-        elsif com.com_attr.mode == 'choose' then
-            tickNote = com.com_attr.notes.choose
-	else
-            puts "Error: Unknown synth play mode."
-	end
-        if com.com_attr.fx != ''
-	  with_fx com.com_attr.fx do
-              play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
-                attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
-                decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
-                decay_level: com.com_attr.decay_level
-	  end
-	else
-            play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
-              attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
-              decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
-              decay_level: com.com_attr.decay_level
-	end
+            if com.com_attr.notes.count > 0
+              use_synth com.com_attr.synth_name
+              if com.com_attr.mode == 'tick' then
+                tickNote = com.com_attr.notes.tick
+              elsif com.com_attr.mode == 'chord' then
+                tickNote = com.com_attr.notes
+              elsif com.com_attr.mode == 'choose' then
+                tickNote = com.com_attr.notes.choose
+              else
+                puts "Error: Unknown synth play mode."
+              end
+              if com.com_attr.fx != ''
+                with_fx com.com_attr.fx do
+                  play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
+                    attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
+                    decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
+                    decay_level: com.com_attr.decay_level
+                end
+              else
+                play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
+                  attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
+                  decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
+                  decay_level: com.com_attr.decay_level
+              end
+            end
 	# ACTION: PLAY SAMPLE
       when "sample"
 	if com.com_attr.fx != ''
@@ -321,7 +323,7 @@ Process the command list
 	  end
 	else
 	  sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
-              attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level
+              attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level, pitch: com.com_attr.pitch
 	end
 	
 	''' TODO: RESTO DE ATRIBUTOS '''
