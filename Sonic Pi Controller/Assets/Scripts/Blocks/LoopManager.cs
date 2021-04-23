@@ -33,6 +33,7 @@ public class LoopManager : MonoBehaviour
     public BlockController blockPF;
 
     public Canvas canvas;
+    [SerializeField] GameObject destroyZone;
     
 
     public void RunLoops()
@@ -77,5 +78,10 @@ public class LoopManager : MonoBehaviour
     public void AddMessage(int loopId, ActionMessage message)
     {
         loops[loopId].AddMessage(message);
+    }
+
+    public void SetDestroyZone(bool active)
+    {
+        destroyZone.SetActive(active);
     }
 }

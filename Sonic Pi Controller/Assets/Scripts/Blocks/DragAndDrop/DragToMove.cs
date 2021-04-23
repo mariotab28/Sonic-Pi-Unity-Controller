@@ -47,7 +47,8 @@ public class DragToMove : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = .5f;
 
-        
+        if (CompareTag("block"))
+            LoopManager.instance.SetDestroyZone(true);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -63,6 +64,9 @@ public class DragToMove : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1.0f;
         drag = false;
+
+        if (CompareTag("block"))
+            LoopManager.instance.SetDestroyZone(false);
     }
 
     public void OnPointerDown(PointerEventData eventData)

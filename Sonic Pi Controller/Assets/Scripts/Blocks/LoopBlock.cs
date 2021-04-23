@@ -41,6 +41,7 @@ public class LoopBlock : MonoBehaviour
         fixedSleepBlock = Instantiate(sleepBlockPF, loopContainerGO.transform);
         fixedSleepBlock.GetBlockAttributes().SetLoop(this);
         fixedSleepBlock.SetDraggable(false);
+        fixedSleepBlock.SetSplitable(false);
         blocks.Add(fixedSleepBlock);
         blockChanges.Add(true);
         blockCount++;

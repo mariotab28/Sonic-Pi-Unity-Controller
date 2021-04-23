@@ -157,6 +157,13 @@ public class BlockShape : MonoBehaviour
         DragToMove dragC = GetComponent<DragToMove>();
         if(dragC) dragC.enabled = canDrag;
     }
+
+    // Enable/disables the abbility to split from the loop
+    public void SetSplitable(bool canSplit)
+    {
+        SplitBlockOnDrag splitC = GetComponent<SplitBlockOnDrag>();
+        if (splitC) splitC.enabled = canSplit;
+    }
     #endregion
 
     #region Logic Methods

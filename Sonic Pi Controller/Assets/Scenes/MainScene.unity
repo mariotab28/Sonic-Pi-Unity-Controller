@@ -1832,7 +1832,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &1195365283
 RectTransform:
   m_ObjectHideFlags: 0
@@ -1935,6 +1935,7 @@ MonoBehaviour:
   initialLoopGO: {fileID: 587831421}
   blockPF: {fileID: 4718891190000842059, guid: 470581cb6b009704ba5ad3f670beba64, type: 3}
   canvas: {fileID: 1401106931}
+  destroyZone: {fileID: 1195365282}
 --- !u!4 &1255730783
 Transform:
   m_ObjectHideFlags: 0

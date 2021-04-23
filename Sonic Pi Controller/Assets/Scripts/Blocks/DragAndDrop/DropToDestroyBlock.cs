@@ -14,5 +14,6 @@ public class DropToDestroyBlock : MonoBehaviour, IDropHandler
         battr.GetLoop().RemoveBlockAt(battr.GetBlockId());
 
         Destroy(eventData.pointerDrag);
+        LoopManager.instance.SetDestroyZone(false);
     }
 }
