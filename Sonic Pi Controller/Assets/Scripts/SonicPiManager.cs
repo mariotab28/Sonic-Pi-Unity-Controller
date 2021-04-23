@@ -112,7 +112,7 @@ public class PlayerMessage : ActionMessage
 public class SynthMessage : PlayerMessage
 {
     public int numOfNotes = 1;
-    public List<int> notes = new List<int>(new int[] { 52 });
+    public List<int> notes = new List<int>(new int[] {  });
     public string mode = "tick";
 
     public SynthMessage()

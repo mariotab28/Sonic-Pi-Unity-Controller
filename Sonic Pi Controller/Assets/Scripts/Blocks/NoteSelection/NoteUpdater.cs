@@ -25,9 +25,9 @@ public class NoteUpdater : MonoBehaviour
         buttonText.text = baseText_ + octave.ToString();
     }
 
-    public void AddNote()
+    public void ChangeNote()
     {
-        noteSelector.AddNote(GetComponentInChildren<Text>().text);
+        noteSelector.ChangeNote(GetComponentInChildren<Text>().text);
     }
 
 }
