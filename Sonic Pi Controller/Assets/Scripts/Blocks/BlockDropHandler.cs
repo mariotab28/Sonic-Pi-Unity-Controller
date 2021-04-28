@@ -16,13 +16,16 @@ public class BlockDropHandler : MonoBehaviour, IDropHandler, IPointerEnterHandle
 
     public void OnDrop(PointerEventData eventData)
     {
+        // If this block has no edge, the dropped block can't be handled
         if(!shape.HasEdge())
             return;
+
+        // Check if the dropped object is a block or a block spawner
         if (eventData.pointerDrag != null && !eventData.pointerDrag.CompareTag("Untagged"))
         {
-            if (eventData.pointerDrag.CompareTag("block"))
+            if (eventData.pointerDrag.CompareTag("block"))  // Block
                 MoveBlock(eventData.pointerDrag);
-            else
+            else  // Block spawner
                 LoopManager.instance.AddBlockToLoop(loopC.loopId, blockAttributes.GetBlockId() + 1, eventData.pointerDrag.tag);
             shape.SetHighlighted(false);
         }
@@ -30,22 +33,12 @@ public class BlockDropHandler : MonoBehaviour, IDropHandler, IPointerEnterHandle
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        if(!shape.HasEdge())
-            return;
-        if (eventData.pointerDrag != null && !eventData.pointerDrag.CompareTag("Untagged"))
-        {
-            shape.SetHighlighted(true);
-        }
+        HighlightEdge(true, eventData.pointerDrag);
     }
 
     public void OnPointerExit(PointerEventData eventData)
     {
-        if(!shape.HasEdge())
-            return;
-        if (eventData.pointerDrag != null && !eventData.pointerDrag.CompareTag("Untagged"))
-        {
-            shape.SetHighlighted(false);
-        }
+        HighlightEdge(false, eventData.pointerDrag);
     }
 
     public void MoveBlock(GameObject block)
@@ -53,7 +46,17 @@ public class BlockDropHandler : MonoBehaviour, IDropHandler, IPointerEnterHandle
         BlockShape bshape = block.GetComponent<BlockShape>();
         if (!bshape) return;
 
-        LoopManager.instance.ChangeBlockPosition(loopC.loopId, bshape, blockAttributes.GetBlockId() + 1);
+        LoopManager.instance.ChangeBlockPosition(loopC.loopId, bshape, blockAttributes.GetBlockId());
+    }
+
+    void HighlightEdge(bool highlight, GameObject pointerDrag)
+    {
+        if (!shape.HasEdge())
+            return;
+        if (pointerDrag != null && !pointerDrag.CompareTag("Untagged"))
+        {
+            shape.SetHighlighted(highlight);
+        }
     }
 
 }

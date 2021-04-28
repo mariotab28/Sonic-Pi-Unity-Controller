@@ -1,12 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class LoopBlock : MonoBehaviour
 {
     #region Variables
     BlockShape shape;
     BlockAttributes attributes;
+    BlockComparer bComparer; // Used por sorting the blocks list
 
     public GameObject loopContainerGO;
     // Block Prefabs
@@ -33,6 +35,8 @@ public class LoopBlock : MonoBehaviour
         shape = GetComponent<BlockShape>();
         shape.SetColor(new Color(Random.Range(0.4f, 1f), Random.Range(0.4f, 1f), Random.Range(0.4f, 1f)));
         shape.AddBottomExtension(shape.GetColor());
+
+        bComparer = new BlockComparer();
 
         attributes = GetComponent<BlockAttributes>();
         attributes.SetId(-1); // Set block ID to -1 por loops
@@ -200,13 +204,97 @@ public class LoopBlock : MonoBehaviour
         blockCount--;
     }
 
+    /// <summary>
+    /// Change the position of a block both in visual representation and in the order of the block list.
+    /// </summary>
+    /// <param name="block">
+    /// The block that is being moved.
+    /// </param>
+    /// <param name="newIndex">
+    /// The index of the block in which it has been dropped.
+    /// </param>
     public void ChangeBlockPosition(BlockShape block, int newIndex)
     {
-        int prevIndex = block.GetBlockAttributes().GetBlockId();
-        RemoveBlockAt(block.GetBlockAttributes().GetBlockId());
         block.transform.SetParent(loopContainerGO.transform);
-        AddBlock(block, newIndex);
+
+        // Change block id for this and successive blocks' attributes
+        // Also
+        // Change sibling index for this and successive blocks
+        int prevIndex = block.GetBlockAttributes().GetBlockId();
+        if (prevIndex > newIndex)
+        {
+            newIndex++; // Moves to the place in front of the block in which the moving block was dropped
+            if (prevIndex == newIndex) // Moves to the same place
+            {
+                block.transform.SetSiblingIndex(newIndex);
+                return;
+            }
+            MoveBlockLeft(block.GetBlockAttributes(), prevIndex, newIndex);
+        }
+        else if (prevIndex < newIndex)
+        {
+            MoveBlockRight(block.GetBlockAttributes(), prevIndex, newIndex);
+        }
+        else
+        {
+            block.transform.SetSiblingIndex(newIndex);
+            return;
+        }
+
+        // Sort to change blocks list index
+        blocks.Sort(bComparer);
+
+        /*
+        foreach (var bl in blocks)
+        {
+            Debug.Log(bl.name);
+            bl.transform.SetParent(loopContainerGO.transform);
+            bl.transform.SetAsLastSibling();
+        }
+        */
+
         Debug.Log("Moved from " + prevIndex + " to " + newIndex);
     }
 
+    /// <summary>
+    /// Changes block id from preIndex to newIndex inside the list of blocks and updates its parent's child hierarchy.
+    /// Also, updates the id of the other blocks.
+    /// The new id is lower than the previous
+    /// </summary>
+    private void MoveBlockLeft(BlockAttributes block, int preId, int newId)
+    {
+        if (newId >= preId) return;
+
+        // Update the other blocks
+        for (int i = newId; i <= preId - 1; i++)
+        {
+            int id = i + 1;
+            blocks[i].GetBlockAttributes().SetId(id);
+            //blocks[i].transform.SetSiblingIndex(id + 1);
+        }
+
+        // Update the moving block
+        block.SetId(newId);
+    }
+
+    /// <summary>
+    /// Changes block id from preIndex to newIndex inside the list of blocks and updates its parent's child hierarchy.
+    /// Also, updates the id of the other blocks.
+    /// The new id is higher than the previous
+    /// </summary>
+    private void MoveBlockRight(BlockAttributes block, int preId, int newId)
+    {
+        if (newId <= preId) return;
+
+        // Update the other blocks
+        for (int i = preId + 1; i <= newId; i++)
+        {
+            int id = i - 1;
+            blocks[i].GetBlockAttributes().SetId(id);
+            //blocks[i].transform.SetSiblingIndex(id + 1);
+        }
+
+        // Update the moving block
+        block.SetId(newId);
+    }
 }
