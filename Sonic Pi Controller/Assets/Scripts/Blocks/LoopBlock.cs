@@ -191,12 +191,6 @@ public class LoopBlock : MonoBehaviour
             Transform t = blockShape.transform;
             t.SetSiblingIndex(attributes.GetBlockId() + 1);
         }
-
-        /*foreach (var b in blocks)
-        {
-            Debug.Log(b.GetBlockAttributes().GetBlockId() +": "+ b.GetBlockAttributes().GetActionMessage().actionName + "\n");
-        }
-        Debug.Log("\n");*/
     }
 
     public void RemoveBlockAt(int index)
@@ -213,6 +207,16 @@ public class LoopBlock : MonoBehaviour
         blockCount--;
     }
 
+    // Force the block layout to refresh and update the order of its children
+    IEnumerator RefreshBlockLayout(BlockShape block, int index)
+    {
+        // Waits for next frame
+        yield return null;
+
+        // Update the moved block sibling index
+        block.transform.SetSiblingIndex(index + 1);
+    }
+
     /// <summary>
     /// Change the position of a block both in visual representation and in the order of the block list.
     /// </summary>
@@ -224,8 +228,6 @@ public class LoopBlock : MonoBehaviour
     /// </param>
     public void ChangeBlockPosition(BlockShape block, int newIndex)
     {
-        block.transform.SetParent(loopContainerGO.transform);
-
         // Change block id for this and successive blocks' attributes
         // Also
         // Change sibling index for this and successive blocks
@@ -250,17 +252,16 @@ public class LoopBlock : MonoBehaviour
             return;
         }
 
+        block.transform.SetParent(loopContainerGO.transform);
+        //block.transform.SetSiblingIndex(newIndex + 1);
+
         // Sort to change blocks list index
         blocks.Sort(bComparer);
 
-        /*
         foreach (var bl in blocks)
-        {
-            Debug.Log(bl.name);
-            bl.transform.SetParent(loopContainerGO.transform);
-            bl.transform.SetAsLastSibling();
-        }
-        */
+            Debug.Log(bl.name + " " + bl.transform.GetSiblingIndex());
+
+        StartCoroutine(RefreshBlockLayout(block, newIndex));
 
         Debug.Log("Moved from " + prevIndex + " to " + newIndex);
     }
@@ -279,11 +280,12 @@ public class LoopBlock : MonoBehaviour
         {
             int id = i + 1;
             blocks[i].GetBlockAttributes().SetId(id);
-            //blocks[i].transform.SetSiblingIndex(id + 1);
+            blockChanges[i] = true;
         }
 
         // Update the moving block
         block.SetId(newId);
+        blockChanges[newId] = true;
     }
 
     /// <summary>
@@ -300,10 +302,11 @@ public class LoopBlock : MonoBehaviour
         {
             int id = i - 1;
             blocks[i].GetBlockAttributes().SetId(id);
-            //blocks[i].transform.SetSiblingIndex(id + 1);
+            blockChanges[i] = true;
         }
 
         // Update the moving block
         block.SetId(newId);
+        blockChanges[newId] = true;
     }
 }
