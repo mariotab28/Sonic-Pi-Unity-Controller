@@ -30,15 +30,23 @@ public class LoopBlock : MonoBehaviour
     #endregion
 
     #region Initialization
-    private void Start()
+    public void Init(int index)
     {
+        // Get Shape
         shape = GetComponent<BlockShape>();
-        shape.SetColor(new Color(Random.Range(0.4f, 1f), Random.Range(0.4f, 1f), Random.Range(0.4f, 1f)));
-        shape.AddBottomExtension(shape.GetColor());
-
+        if (!shape) Debug.LogError("Error: Loop block missing shape component!");
+        // Get Attributes
+        attributes = GetComponent<BlockAttributes>();
+        if (!attributes) Debug.LogError("Error: Loop block missing attributes component!");
+        // Init block comparer
         bComparer = new BlockComparer();
 
-        attributes = GetComponent<BlockAttributes>();
+        // Set id of the loop
+        loopId = index;
+
+        shape.SetColor(new Color(Random.Range(0.4f, 1f), Random.Range(0.4f, 1f), Random.Range(0.4f, 1f)));
+        shape.AddBottomExtension(shape.GetColor());
+        
         attributes.SetId(-1); // Set block ID to -1 por loops
 
         // Spawn initial Sleep block
@@ -51,6 +59,7 @@ public class LoopBlock : MonoBehaviour
         blockCount++;
         fixedSleepBlock.AddBottomExtension(shape.GetColor()); // Add an extension to the block to indicate hierarchy
     }
+
     #endregion
 
     public void AddMessage(ActionMessage msg)

@@ -35,6 +35,9 @@ public class DragToInstantiate : MonoBehaviour, IPointerDownHandler, IBeginDragH
         drag = true;
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = .5f;
+
+        if (gameObject.CompareTag("loop"))
+            LoopManager.instance.SetAddLoopZone(true);
     }
 
     public void OnDrag(PointerEventData eventData)
@@ -50,6 +53,9 @@ public class DragToInstantiate : MonoBehaviour, IPointerDownHandler, IBeginDragH
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1.0f;
         drag = false;
+
+        if (gameObject.CompareTag("loop"))
+            LoopManager.instance.SetAddLoopZone(false);
     }
 
     public void OnPointerDown(PointerEventData eventData)

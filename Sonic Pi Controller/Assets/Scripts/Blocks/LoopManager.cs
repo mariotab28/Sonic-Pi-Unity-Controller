@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -18,30 +19,83 @@ public class LoopManager : MonoBehaviour
         {
             instance = this;
             loops = new List<LoopBlock>();
-            loops.Add(initialLoopGO);
             DontDestroyOnLoad(gameObject);
         }
     }
 
+
     #endregion
 
-    int loopCount = 1;
+    int loopCount = 0;
 
     List<LoopBlock> loops;
-    public GameObject loopContainerGO;
-    public LoopBlock initialLoopGO;
-    public BlockController blockPF;
+    [SerializeField] GameObject loopContainerGO;
+    [SerializeField] LoopBlock initialLoopGO;
+    [SerializeField] GameObject loopPF;
 
     public Canvas canvas;
     [SerializeField] GameObject destroyZone;
-    
+    [SerializeField] GameObject addLoopZone;
 
+    RectTransform containerRect;
+
+    private void Start()
+    {
+        containerRect = loopContainerGO.GetComponent<RectTransform>();
+        if (!containerRect) Debug.LogError("Error: Loop container's rect not found");
+
+        // Add an empty loop on Start
+        initialLoopGO = AddLoop();
+    }
+
+    /**********************************/
+    //  LOOP METHODS
+    /**********************************/
+
+    /// <summary>
+    /// Tell each active loop to send its messages
+    /// </summary>
     public void RunLoops()
     {
         foreach (LoopBlock loop in loops)
             loop.SendActionMessages();
     }
 
+    /// <summary>
+    /// Creates a new loop and adds it to the loop manager
+    /// </summary>
+    public LoopBlock AddLoop()
+    {
+        // Creates the loop Object
+        GameObject newLoopParent = Instantiate(loopPF, loopContainerGO.transform);
+
+        // Initialize the loop
+        LoopBlock newLoop = newLoopParent.GetComponentInChildren<LoopBlock>();
+        if (!newLoop)
+        {
+            Debug.LogError("Error: Loop component not found in new loop object.");
+            Destroy(newLoopParent);
+            return null;
+        }
+        newLoop.Init(loopCount);
+
+        // Add loop to list of loops
+        loops.Add(newLoop);
+
+        loopCount++;
+
+        // Enlarge container
+        RectTransform loopRect = newLoopParent.GetComponent<RectTransform>();
+        if (!loopRect) Debug.LogError("Error: Cannot find rect component in loop object");
+        Vector2 newSize = new Vector2(containerRect.sizeDelta.x, containerRect.sizeDelta.y + (!loopRect ? 0 : loopRect.sizeDelta.y + 200));
+        loopContainerGO.GetComponent<RectTransform>().sizeDelta = newSize;
+
+        return newLoop;
+    }
+
+    /**********************************/
+    //  BLOCK METHODS
+    /**********************************/
     public void RemoveBlockFromLoop(int loopId, int blockId)
     {
         ActionMessage msg = new ActionMessage();
@@ -83,5 +137,10 @@ public class LoopManager : MonoBehaviour
     public void SetDestroyZone(bool active)
     {
         destroyZone.SetActive(active);
+    }
+
+    public void SetAddLoopZone(bool active)
+    {
+        addLoopZone.SetActive(active);
     }
 }
