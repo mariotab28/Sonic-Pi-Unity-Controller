@@ -97,7 +97,7 @@ public class LoopBlock : MonoBehaviour
         //BlockAttributes ba = fixedSleepBlock.GetBlockAttributes();
         //SonicPiManager.instance.sendActionMessage(messages[0]);
 
-        SonicPiManager.instance.sendActionMessageGroup(messages);
+        SonicPiManager.instance.SendActionMessageGroup(messages);
         messages.Clear();
         //messages.RemoveAt(0);
     }
@@ -308,5 +308,11 @@ public class LoopBlock : MonoBehaviour
         // Update the moving block
         block.SetId(newId);
         blockChanges[newId] = true;
+    }
+
+    // Asks the loop manager to remove this loop and stop playing it
+    public void DeleteLoop()
+    { 
+        
     }
 }

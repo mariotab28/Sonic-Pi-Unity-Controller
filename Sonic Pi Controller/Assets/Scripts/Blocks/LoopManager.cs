@@ -82,6 +82,9 @@ public class LoopManager : MonoBehaviour
         // Add loop to list of loops
         loops.Add(newLoop);
 
+        // Send message to sonic pi asking for loop creation
+        SonicPiManager.instance.SendNewLoopMessage();
+
         loopCount++;
 
         // Enlarge container

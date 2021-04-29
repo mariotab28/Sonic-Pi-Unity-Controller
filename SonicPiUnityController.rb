@@ -151,12 +151,16 @@ Waits for messages from Unity and adds the received commands
 def listenUnityCommand(id, commands)
   # Gets OSC message from Unity
   val = sync"/osc*/sonicpi/unity/trigger"
-  
+
+  if val[0] == "loop"
+    return 0
+  end
+
   if val[0] == "stop"
     comAttr = SleepAttributes.new("stop", -1)
     comId = 0
     com = Command.new(0, 0, comAttr)
-    puts "Application stopped"
+    puts "Loop stopped"
     
     # Add the command to command list
     commands[comId] = com
@@ -355,24 +359,24 @@ Listen/Play loops definition
     # LISTENER LOOP
     in_thread do
       loop do
-	#puts "id = " + id.to_s
-	# Listen commands for command list 'id'
-	listenUnityCommand(id, commands[id])
-	#puts "Listening (" + id.to_s + ")..."
-	sleep 0.1
+        #puts "id = " + id.to_s
+        # Listen commands for command list 'id'
+        listenUnityCommand(id, commands[id])
+        #puts "Listening (" + id.to_s + ")..."
+        sleep 0.1
       end
     end
   end
   
   def doPlayerLoop(id,commands)
     puts "Player " + id.to_s
-    # Set the live_loop name
-    loopName = "playerLoop#{id.to_s}"
-    # PLAYER LOOP
-    live_loop loopName do
-      #puts "Playing (" + id.to_s + ")..."
-      # Process command list number 'id'
-      processCommands(id, commands[id])
+      # Set the live_loop name
+      loopName = "playerLoop#{id.to_s}"
+      # PLAYER LOOP
+      live_loop loopName do
+        #puts "Playing (" + id.to_s + ")..."
+        # Process command list number 'id'
+        processCommands(id, commands[id])
     end
   end
   
@@ -385,18 +389,47 @@ Variables and Initialization of the loop rack
   use_osc "localhost", 4560
   
   # Number of loops listening to Unity commands
-  nLoops = 1
+  nLoops = 0
   # Command list
   commands = []
   
-  # Command list initialization
+def addLoop(nLoops, commands)
+  # Add new loop
+  loopId = nLoops
+  puts "Adding new loop! id: " + loopId.to_s
+
+  commands[loopId] = []
+  doListenerLoop(loopId, commands) # Starts listening loop
+  doPlayerLoop(loopId, commands)   # Starts playing loop
+end
+
+def deleteLoop(id, commands)
+  # Remove loop[id]
+  puts "Removing loop with id: " + loopId.to_s
+
+  commands.delete_at(id)
+end
+
+  # Listen for loop creation messages:
+  while(true)
+    val = sync"/osc*/sonicpi/unity/trigger"
+    if val[0] == "loop"
+      addLoop(nLoops, commands)
+      nLoops = nLoops + 1
+    elsif val[0] == "del_loop"
+      deleteLoop(val[1], commands)
+      nLoops = nLoops - 1
+    end
+  end
+
+'''
   for i in 0..(nLoops - 1)
     puts i
     commands[i] = []
     doListenerLoop(i, commands) # Starts listening loop
     doPlayerLoop(i, commands)   # Starts playing loop
   end
-  
+'''
   
   
   
