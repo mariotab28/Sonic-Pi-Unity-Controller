@@ -329,9 +329,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_TargetAssemblyTypeName: BlockShape, Assembly-CSharp
-        m_MethodName: AddExtension
+      - m_Target: {fileID: 8209312775831114413}
+        m_TargetAssemblyTypeName: LoopBlock, Assembly-CSharp
+        m_MethodName: DeleteLoop
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

@@ -107,6 +107,11 @@ public class LoopBlock : MonoBehaviour
         blockChanges[index] = true;
     }
 
+    public void SetLoopId(int id)
+    {
+        loopId = id;
+    }
+
     public BlockShape AddSynthBlock()
     {
         return Instantiate(synthBlockPF, loopContainerGO.transform);
@@ -312,7 +317,14 @@ public class LoopBlock : MonoBehaviour
 
     // Asks the loop manager to remove this loop and stop playing it
     public void DeleteLoop()
-    { 
-        
+    {
+        // Remove from loop management
+        LoopManager.instance.RemoveLoop(loopId);
+
+        // Destroy objects
+        foreach (var block in blocks)
+            Destroy(block.gameObject);
+        Destroy(loopContainerGO);
+        Destroy(gameObject);
     }
 }

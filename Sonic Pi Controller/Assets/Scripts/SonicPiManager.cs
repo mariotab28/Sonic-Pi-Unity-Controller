@@ -310,5 +310,10 @@ public class SonicPiManager : MonoBehaviour
     {
         OSCHandler.Instance.SendMessageToClient("SonicPi", "/sonicpi/unity/trigger", "loop");
     }
+
+    public void SendDeleteLoopMessage(int loopId)
+    {
+        OSCHandler.Instance.SendMessageToClient("SonicPi", "/sonicpi/unity/trigger", new List<object> { "del_loop", loopId });
+    }
     #endregion
 }

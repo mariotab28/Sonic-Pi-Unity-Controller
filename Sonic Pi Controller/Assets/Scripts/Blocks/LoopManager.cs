@@ -38,6 +38,7 @@ public class LoopManager : MonoBehaviour
     [SerializeField] GameObject addLoopZone;
 
     RectTransform containerRect;
+    float loopHeight = 200; 
 
     private void Start()
     {
@@ -90,10 +91,27 @@ public class LoopManager : MonoBehaviour
         // Enlarge container
         RectTransform loopRect = newLoopParent.GetComponent<RectTransform>();
         if (!loopRect) Debug.LogError("Error: Cannot find rect component in loop object");
-        Vector2 newSize = new Vector2(containerRect.sizeDelta.x, containerRect.sizeDelta.y + (!loopRect ? 0 : loopRect.sizeDelta.y + 200));
-        loopContainerGO.GetComponent<RectTransform>().sizeDelta = newSize;
+        Vector2 newSize = new Vector2(containerRect.sizeDelta.x, containerRect.sizeDelta.y + (!loopRect ? 0 : loopRect.sizeDelta.y + loopHeight));
+        containerRect.sizeDelta = newSize;
 
         return newLoop;
+    }
+
+    public void RemoveLoop(int loopId)
+    {
+        // Send message to Sonic Pi
+        SonicPiManager.instance.SendDeleteLoopMessage(loopId);
+
+        // Remove from list of loops
+        loops.RemoveAt(loopId);
+        loopCount--;
+        // Update other loops id
+        for (int i = loopId; i < loops.Count; i++)
+            loops[i].SetLoopId(i);
+
+        // Reduce container
+        Vector2 newSize = new Vector2(containerRect.sizeDelta.x, containerRect.sizeDelta.y - loopHeight);
+        containerRect.sizeDelta = newSize;
     }
 
     /**********************************/

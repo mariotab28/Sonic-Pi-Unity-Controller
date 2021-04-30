@@ -405,7 +405,7 @@ end
 
 def deleteLoop(id, commands)
   # Remove loop[id]
-  puts "Removing loop with id: " + loopId.to_s
+  puts "Removing loop with id: " + id.to_s
 
   commands.delete_at(id)
 end
