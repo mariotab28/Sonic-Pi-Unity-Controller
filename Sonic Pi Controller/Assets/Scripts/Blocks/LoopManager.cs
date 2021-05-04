@@ -89,10 +89,10 @@ public class LoopManager : MonoBehaviour
         loopCount++;
 
         // Enlarge container
-        RectTransform loopRect = newLoopParent.GetComponent<RectTransform>();
+        /*RectTransform loopRect = newLoopParent.GetComponent<RectTransform>();
         if (!loopRect) Debug.LogError("Error: Cannot find rect component in loop object");
         Vector2 newSize = new Vector2(containerRect.sizeDelta.x, containerRect.sizeDelta.y + (!loopRect ? 0 : loopRect.sizeDelta.y + loopHeight));
-        containerRect.sizeDelta = newSize;
+        containerRect.sizeDelta = newSize;*/
 
         return newLoop;
     }
@@ -110,8 +110,8 @@ public class LoopManager : MonoBehaviour
             loops[i].SetLoopId(i);
 
         // Reduce container
-        Vector2 newSize = new Vector2(containerRect.sizeDelta.x, containerRect.sizeDelta.y - loopHeight);
-        containerRect.sizeDelta = newSize;
+        /*Vector2 newSize = new Vector2(containerRect.sizeDelta.x, containerRect.sizeDelta.y - loopHeight);
+        containerRect.sizeDelta = newSize;*/
     }
 
     /**********************************/
