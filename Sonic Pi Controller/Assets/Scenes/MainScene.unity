@@ -1036,6 +1036,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9d3cdc44250512d43b0ec557103e3127, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  numberOfLoops: 10
   synthAttributes: {fileID: 4900000, guid: 5068ce16fe0e1174eb8472bf7f287dfc, type: 3}
   sampleAttributes: {fileID: 4900000, guid: 326d50fe722253842af6e238bdf0929f, type: 3}
   sleepAttributes: {fileID: 4900000, guid: ea93ad324d14ff745b152dd161992af1, type: 3}
@@ -1224,7 +1225,7 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: -893.4747, y: 340.31003}
+  m_AnchoredPosition: {x: -893.4747, y: 339.54544}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 1}
 --- !u!114 &630067289
@@ -1908,7 +1909,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 1234679674}
   m_Direction: 2
   m_Value: 1
-  m_Size: 1
+  m_Size: 0.97639066
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:
@@ -1926,7 +1927,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 0, b: 0, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -2357,7 +2358,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.2830189, g: 0.2830189, b: 0.2830189, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 0
@@ -2412,7 +2413,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   loopContainerGO: {fileID: 630067287}
-  initialLoopGO: {fileID: 0}
   loopPF: {fileID: 6155613645764104666, guid: 1d359eef88707c24b8fb546b1baad93d, type: 3}
   canvas: {fileID: 1401106931}
   destroyZone: {fileID: 1195365282}

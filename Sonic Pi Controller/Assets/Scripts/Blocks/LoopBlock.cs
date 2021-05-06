@@ -67,7 +67,12 @@ public class LoopBlock : MonoBehaviour
         messages.Add(msg);
     }
 
-    public void SendActionMessages()
+    public void ClearMessages()
+    {
+        messages.Clear();
+    }
+
+    public List<ActionMessage> GetActionMessages()
     {
 
         /*
@@ -90,15 +95,17 @@ public class LoopBlock : MonoBehaviour
         }
 
         if (messages.Count <= 0)
-            return;
+            return null;
 
         Debug.Log("Sending " + messages.Count + " messages.");
+
+        return messages;
 
         //BlockAttributes ba = fixedSleepBlock.GetBlockAttributes();
         //SonicPiManager.instance.sendActionMessage(messages[0]);
 
-        SonicPiManager.instance.SendActionMessageGroup(messages);
-        messages.Clear();
+        //SonicPiManager.instance.SendActionMessageGroup(messages);
+        //messages.Clear();
         //messages.RemoveAt(0);
     }
 
@@ -107,9 +114,20 @@ public class LoopBlock : MonoBehaviour
         blockChanges[index] = true;
     }
 
+    public void SetChangedLoop(bool changed)
+    {
+        for (int i = 0; i < blockChanges.Count; i++)
+            blockChanges[i] = changed;
+    }
+
     public void SetLoopId(int id)
     {
         loopId = id;
+    }
+
+    public int GetLoopId()
+    {
+        return loopId;
     }
 
     public BlockShape AddSynthBlock()
@@ -200,6 +218,14 @@ public class LoopBlock : MonoBehaviour
 
     public void RemoveBlockAt(int index)
     {
+        // Create a delete message
+        ActionMessage msg = new ActionMessage();
+        msg.loopId = loopId;
+        msg.blockId = blocks.Count - 1;
+        msg.actionName = "empty";
+        AddMessage(msg);
+        blockChanges[msg.blockId] = true;
+
         blocks.RemoveAt(index);
         blockChanges.RemoveAt(index);
 
@@ -290,7 +316,7 @@ public class LoopBlock : MonoBehaviour
 
         // Update the moving block
         block.SetId(newId);
-        blockChanges[newId] = true;
+        blockChanges[preId] = true;
     }
 
     /// <summary>
@@ -312,7 +338,7 @@ public class LoopBlock : MonoBehaviour
 
         // Update the moving block
         block.SetId(newId);
-        blockChanges[newId] = true;
+        blockChanges[preId] = true;
     }
 
     // Asks the loop manager to remove this loop and stop playing it

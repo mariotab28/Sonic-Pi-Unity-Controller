@@ -30,23 +30,17 @@ public class LoopManager : MonoBehaviour
 
     List<LoopBlock> loops;
     [SerializeField] GameObject loopContainerGO;
-    [SerializeField] LoopBlock initialLoopGO;
     [SerializeField] GameObject loopPF;
 
     public Canvas canvas;
     [SerializeField] GameObject destroyZone;
     [SerializeField] GameObject addLoopZone;
 
-    RectTransform containerRect;
-    float loopHeight = 200; 
 
     private void Start()
     {
-        containerRect = loopContainerGO.GetComponent<RectTransform>();
-        if (!containerRect) Debug.LogError("Error: Loop container's rect not found");
-
         // Add an empty loop on Start
-        initialLoopGO = AddLoop();
+        AddLoop();
     }
 
     /**********************************/
@@ -58,8 +52,50 @@ public class LoopManager : MonoBehaviour
     /// </summary>
     public void RunLoops()
     {
+        //List<List<ActionMessage>> loopMsgs = new List<List<ActionMessage>>();
+        List<object> msgValues = new List<object>();
+        List<object> auxValuesList = new List<object>();
+        int numberOfLoops = 0;
+
         foreach (LoopBlock loop in loops)
-            loop.SendActionMessages();
+        {
+            // Get message group from loop
+            List<ActionMessage> msgGroup = loop.GetActionMessages();
+
+            // Check if the msgGroup is empty
+            if (msgGroup != null)
+            {
+                // Increase number of loop messages
+                numberOfLoops++;
+                // Add id of the loop
+                msgValues.Add(loop.GetLoopId());
+                int valuesCount = 0;
+
+                foreach (ActionMessage message in msgGroup)
+                {
+                    List<object> valueList = message.ToObjectList();
+                    // Increment values count
+                    valuesCount += valueList.Count;
+                    // Append to message group value list
+                    auxValuesList.AddRange(valueList);
+                }
+
+                // Add number of values
+                msgValues.Add(valuesCount);
+                // Add number of commands
+                msgValues.Add(msgGroup.Count);
+                // Add all command values
+                msgValues.AddRange(auxValuesList);
+
+                loop.ClearMessages();
+            }
+        }
+
+        // Add number of loops at the start
+        msgValues.Insert(0, numberOfLoops);
+
+        // Send message to Sonic Pi
+        SonicPiManager.instance.SendActionMessageGroup(msgValues);
     }
 
     /// <summary>
@@ -67,6 +103,9 @@ public class LoopManager : MonoBehaviour
     /// </summary>
     public LoopBlock AddLoop()
     {
+        // Check loop number limit
+        if (loopCount >= SonicPiManager.instance.GetNumberOfLoops()) return null;
+
         // Creates the loop Object
         GameObject newLoopParent = Instantiate(loopPF, loopContainerGO.transform);
 
@@ -84,15 +123,9 @@ public class LoopManager : MonoBehaviour
         loops.Add(newLoop);
 
         // Send message to sonic pi asking for loop creation
-        SonicPiManager.instance.SendNewLoopMessage();
+        //SonicPiManager.instance.SendNewLoopMessage();
 
         loopCount++;
-
-        // Enlarge container
-        /*RectTransform loopRect = newLoopParent.GetComponent<RectTransform>();
-        if (!loopRect) Debug.LogError("Error: Cannot find rect component in loop object");
-        Vector2 newSize = new Vector2(containerRect.sizeDelta.x, containerRect.sizeDelta.y + (!loopRect ? 0 : loopRect.sizeDelta.y + loopHeight));
-        containerRect.sizeDelta = newSize;*/
 
         return newLoop;
     }
@@ -107,11 +140,10 @@ public class LoopManager : MonoBehaviour
         loopCount--;
         // Update other loops id
         for (int i = loopId; i < loops.Count; i++)
+        {
             loops[i].SetLoopId(i);
-
-        // Reduce container
-        /*Vector2 newSize = new Vector2(containerRect.sizeDelta.x, containerRect.sizeDelta.y - loopHeight);
-        containerRect.sizeDelta = newSize;*/
+            loops[i].SetChangedLoop(true);
+        }
     }
 
     /**********************************/
@@ -119,11 +151,6 @@ public class LoopManager : MonoBehaviour
     /**********************************/
     public void RemoveBlockFromLoop(int loopId, int blockId)
     {
-        ActionMessage msg = new ActionMessage();
-        msg.loopId = loopId;
-        msg.blockId = blockId;
-        msg.actionName = "delete";
-        loops[loopId].AddMessage(msg);
         loops[loopId].RemoveBlockAt(blockId);
     }
 

@@ -139,9 +139,106 @@ end
 
 '''
 ============================
-  Methods
+  Parsing Methods
 ============================
 '''
+
+''' Parses message contained in val and return a sleep command attribute structure'''
+def parseSleepCommand(val, i)
+  return SleepAttributes.new(val[i], val[i+1])
+end
+
+''' Parses message contained in val and return a synth command attribute structure'''
+def parseSynthCommand(val, pre_i, i, notesToPlay)
+  comAttr = SynthAttributes.new()
+  comAttr.action = val[pre_i]
+  comAttr.synth_name = val[pre_i + 1]
+  comAttr.notes = notesToPlay
+  comAttr.mode = val[i]
+  comAttr.amp = val[i + 1]
+  comAttr.pan = val[i + 2]
+  comAttr.attack = val[i + 3]
+  comAttr.sustain = val[i + 4]
+  comAttr.release = val[i + 5]
+  comAttr.decay = val[i + 6]
+  comAttr.attack_level = val[i + 7]
+  comAttr.sustain_level = val[i + 8]
+  comAttr.decay_level = val[i + 9]
+  comAttr.fx = val[i + 10]
+  return comAttr
+end
+
+''' Parses message contained in val and return a sample command attribute structure'''
+def parseSampleCommand(val, i)
+  comAttr = SampleAttributes.new()
+  comAttr.action = val[i]
+  comAttr.sample_name = val[i + 1]
+  comAttr.amp = val[i + 2]
+  comAttr.pan = val[i + 3]
+  comAttr.attack = val[i + 4]
+  comAttr.sustain = val[i + 5]
+  comAttr.release = val[i + 6]
+  comAttr.decay = val[i + 7]
+  comAttr.attack_level = val[i + 8]
+  comAttr.sustain_level = val[i + 9]
+  comAttr.decay_level = val[i + 10]
+  comAttr.lpf = val[i + 11]
+  comAttr.lpf_attack = val[i + 12]
+  comAttr.lpf_decay = val[i + 13]
+  comAttr.lpf_sustain = val[i + 14]
+  comAttr.lpf_release = val[i + 15]
+  comAttr.lpf_min= val[i + 16]
+  comAttr.lpf_init_level = val[i + 17]
+  comAttr.lpf_release_level = val[i + 18]
+  comAttr.lpf_sustain_level = val[i + 19]
+  comAttr.lpf_decay_level = val[i + 20]
+  comAttr.lpf_attack_level = val[i + 21]
+  comAttr.lpf_env_curve = val[i + 22]
+  comAttr.hpf = val[i + 23]
+  comAttr.hpf_max = val[i + 24]
+  comAttr.hpf_attack = val[i + 25]
+  comAttr.hpf_decay = val[i + 26]
+  comAttr.hpf_sustain = val[i + 27]
+  comAttr.hpf_release = val[i + 28]
+  comAttr.hpf_init_level = val[i + 29]
+  comAttr.hpf_release_level = val[i + 30]
+  comAttr.hpf_sustain_level = val[i + 31]
+  comAttr.hpf_decay_level = val[i + 32]
+  comAttr.hpf_attack_level = val[i + 33]
+  comAttr.hpf_env_curve = val[i + 34]
+  comAttr.rate = val[i + 35]
+  comAttr.start = val[i + 36]
+  comAttr.finish = val[i + 37]
+  comAttr.norm = val[i + 38]
+  comAttr.pitch = val[i + 39]
+  comAttr.window_size = val[i + 40]
+  comAttr.pitch_dis = val[i + 41]
+  comAttr.time_dis = val[i + 42]
+  comAttr.compress = val[i + 43]
+  comAttr.threshold = val[i + 44]
+  comAttr.clamp_time = val[i + 45]
+  comAttr.slope_above = val[i + 46]
+  comAttr.slope_below = val[i + 47]
+  comAttr.relax_time = val[i + 48]
+  comAttr.fx = val[i + 49]
+  return comAttr
+end
+
+'''
+============================
+  Listen/Process Methods
+============================
+'''
+
+'''
+Displays all the content of val for debugging purposes
+'''
+def printMessageValues(val)
+  len = val.length()
+  for i in 0..(len-1) do
+    puts i.to_s + "| " + val[i].to_s
+  end
+end
 
 '''
 Waits for messages from Unity and adds the received commands
@@ -152,7 +249,7 @@ def listenUnityCommand(id, commands)
   # Gets OSC message from Unity
   val = sync"/osc*/sonicpi/unity/trigger"
 
-  if val[0] == "loop"
+  if val[0] == "del_loop"
     return 0
   end
 
@@ -165,24 +262,60 @@ def listenUnityCommand(id, commands)
     # Add the command to command list
     commands[comId] = com
   else
-    # Run through each message received
-    numComs = val[0]
-    a = 0
+
+'''
+Structure of the message:
+* numLoops, 
+  <for each loop:>
+  * loopId, numberOfValues, numberOfCommands,
+    <for each command:>
+    * commandId, commandName, <list of values for each attribute>
+'''
+    numLoops = val[0]
+    if numLoops <= 0
+      puts "Wrong number of loops."
+      return -1
+    end
+    
+    a = 1 # Index to run through message values
+    thisLoop = false
+    l = 0
+    while (l < numLoops) and (not thisLoop) do
+      loopId = val[a]
+      # Is this my loop?
+      if loopId == id
+        thisLoop = true
+      elsif
+        # Not this loop => skip: number of values, number of commands and  message values
+        numVals = val[a + 1]
+        a = a + 1 + 1 + numVals
+      end
+      l = l + 1 # Next loop 
+    end
+    # Exit if there are no commands for this loop
+    if not thisLoop
+      puts "No messages for loop " + id.to_s
+      return 0
+    end
+      
+    printMessageValues(val)
+    a = a + 1 + 1 # Skip numVals
+    # Run through each command values
+    numComs = val[a]
+    puts " * Parsing " + numComs.to_s + " commands for loop " + id.to_s
+    a = a + 1 # Skip numComs
     for k in 1..numComs do
       # Parse message to Command
-      loopId = val[a + 1]
-      if loopId != id 
-          puts "WRONG LOOP!-> " + a.to_s
-        return
-      end
-      comId = val[a + 2]
-      i = a + 3
-      puts "Received Command: " + val[i].to_s + "(" + i.to_s + ")"
-      case val[i]
+      comId = val[a]
+      i = a + 1 # Skip comId
+      puts "Received Command: " + val[i].to_s + "(at " + i.to_s + ")"
+      case val[i] # Check command name
       # ACTION: SLEEP
       when "sleep"
-        comAttr = SleepAttributes.new(val[i], val[i+1])
-        a = i + 1
+        comAttr = parseSleepCommand(val, i)
+        nAttr = 1 
+        # Skip: command name and attributes(1)
+        a = a + 1 + nAttr + 1
         # ACTION: PLAY SYNTH
       when "synth"
         numOfNotes = val[i+2] # Number of notes of the sequence to play
@@ -195,76 +328,20 @@ def listenUnityCommand(id, commands)
         
         pre_i = i
         i = ei + 1
-        comAttr = SynthAttributes.new()
-        comAttr.action = val[pre_i]
-        comAttr.synth_name = val[pre_i + 1]
-        comAttr.notes = notesToPlay
-        comAttr.mode = val[i]
-        comAttr.amp = val[i + 1]
-        comAttr.pan = val[i + 2]
-        comAttr.attack = val[i + 3]
-        comAttr.sustain = val[i + 4]
-        comAttr.release = val[i + 5]
-        comAttr.decay = val[i + 6]
-        comAttr.attack_level = val[i + 7]
-        comAttr.sustain_level = val[i + 8]
-        comAttr.decay_level = val[i + 9]
-        comAttr.fx = val[i + 10]
-        a = a + 16 + numOfNotes
+        comAttr = parseSynthCommand(val, pre_i, i, notesToPlay)
+        nAttr = 1 
+        # Skip: command name + player name + number of notes 
+        #   + numOfNotes + mode + attributes(9 + fx)
+        a = a + 1 + 1 + 1 + numOfNotes + 1 + 10 + 1
       # SAMPLE
       when "sample"
-        comAttr = SampleAttributes.new()
-        comAttr.action = val[i]
-        comAttr.sample_name = val[i + 1]
-        comAttr.amp = val[i + 2]
-        comAttr.pan = val[i + 3]
-        comAttr.attack = val[i + 4]
-        comAttr.sustain = val[i + 5]
-        comAttr.release = val[i + 6]
-        comAttr.decay = val[i + 7]
-        comAttr.attack_level = val[i + 8]
-        comAttr.sustain_level = val[i + 9]
-        comAttr.decay_level = val[i + 10]
-        comAttr.lpf = val[i + 11]
-        comAttr.lpf_attack = val[i + 12]
-        comAttr.lpf_decay = val[i + 13]
-        comAttr.lpf_sustain = val[i + 14]
-        comAttr.lpf_release = val[i + 15]
-        comAttr.lpf_min= val[i + 16]
-        comAttr.lpf_init_level = val[i + 17]
-        comAttr.lpf_release_level = val[i + 18]
-        comAttr.lpf_sustain_level = val[i + 19]
-        comAttr.lpf_decay_level = val[i + 20]
-        comAttr.lpf_attack_level = val[i + 21]
-        comAttr.lpf_env_curve = val[i + 22]
-        comAttr.hpf = val[i + 23]
-        comAttr.hpf_max = val[i + 24]
-        comAttr.hpf_attack = val[i + 25]
-        comAttr.hpf_decay = val[i + 26]
-        comAttr.hpf_sustain = val[i + 27]
-        comAttr.hpf_release = val[i + 28]
-        comAttr.hpf_init_level = val[i + 29]
-        comAttr.hpf_release_level = val[i + 30]
-        comAttr.hpf_sustain_level = val[i + 31]
-        comAttr.hpf_decay_level = val[i + 32]
-        comAttr.hpf_attack_level = val[i + 33]
-        comAttr.hpf_env_curve = val[i + 34]
-        comAttr.rate = val[i + 35]
-        comAttr.start = val[i + 36]
-        comAttr.finish = val[i + 37]
-        comAttr.norm = val[i + 38]
-        comAttr.pitch = val[i + 39]
-        comAttr.window_size = val[i + 40]
-        comAttr.pitch_dis = val[i + 41]
-        comAttr.time_dis = val[i + 42]
-        comAttr.compress = val[i + 43]
-        comAttr.threshold = val[i + 44]
-        comAttr.clamp_time = val[i + 45]
-        comAttr.slope_above = val[i + 46]
-        comAttr.slope_below = val[i + 47]
-        comAttr.relax_time = val[i + 48]
-        comAttr.fx = val[i + 49]
-        a = a + 49 + 3
+        comAttr = parseSampleCommand(val, i)
+        # Skip: command name + player name + attributes(47 + fx)
+        a = a + 1 + 1 + 48 + 1
+      when "empty"
+        comAttr = SleepAttributes.new("empty", -1)
+        # Skip: command name and attributes(1)
+        a = a + 1 + 1
       else
         comAttr = nil
         puts "ERROR: Unknown action name."
@@ -276,6 +353,7 @@ def listenUnityCommand(id, commands)
     end
   end
 end
+
 '''
 Process the command list
 - id: Index of the processing loop
@@ -331,11 +409,11 @@ Process the command list
 	end
 	
 	''' TODO: RESTO DE ATRIBUTOS '''
-	# ACTION: WITH FX
-      when "fx"
-	'''TODO: reproducir secuencia de comandos dentro del bloque with_fx'''
+      when "empty"
+	puts "Empty command in loop " + id.to_s
 	# STOP
       when "stop"
+        puts "Stop processing loop " + id.to_s
 	stop
       else
 	puts "ERROR: Unknown command name. Can't process command."
@@ -359,10 +437,9 @@ Listen/Play loops definition
     # LISTENER LOOP
     in_thread do
       loop do
-        #puts "id = " + id.to_s
+        #puts "Listening (" + id.to_s + ")..."
         # Listen commands for command list 'id'
         listenUnityCommand(id, commands[id])
-        #puts "Listening (" + id.to_s + ")..."
         sleep 0.1
       end
     end
@@ -370,13 +447,13 @@ Listen/Play loops definition
   
   def doPlayerLoop(id,commands)
     puts "Player " + id.to_s
-      # Set the live_loop name
-      loopName = "playerLoop#{id.to_s}"
-      # PLAYER LOOP
-      live_loop loopName do
-        #puts "Playing (" + id.to_s + ")..."
-        # Process command list number 'id'
-        processCommands(id, commands[id])
+    # Set the live_loop name
+    loopName = "playerLoop#{id.to_s}"
+    # PLAYER LOOP
+    live_loop loopName do
+      #puts "Playing (" + id.to_s + ")..."
+      # Process command list number 'id'
+      processCommands(id, commands[id])
     end
   end
   
@@ -386,50 +463,54 @@ Listen/Play loops definition
 Variables and Initialization of the loop rack
 ========================================================
 '''
-  use_osc "localhost", 4560
+use_osc "localhost", 4560
+
+# Command list
+commands = []
   
-  # Number of loops listening to Unity commands
-  nLoops = 0
-  # Command list
-  commands = []
-  
+'''
 def addLoop(nLoops, commands)
   # Add new loop
   loopId = nLoops
   puts "Adding new loop! id: " + loopId.to_s
-
+  
   commands[loopId] = []
   doListenerLoop(loopId, commands) # Starts listening loop
   doPlayerLoop(loopId, commands)   # Starts playing loop
 end
-
+''' 
 def deleteLoop(id, commands)
   # Remove loop[id]
   puts "Removing loop with id: " + id.to_s
-
-  commands.delete_at(id)
+  commands[id] = []
 end
 
-  # Listen for loop creation messages:
-  while(true)
-    val = sync"/osc*/sonicpi/unity/trigger"
-    if val[0] == "loop"
-      addLoop(nLoops, commands)
-      nLoops = nLoops + 1
-    elsif val[0] == "del_loop"
-      deleteLoop(val[1], commands)
-      nLoops = nLoops - 1
-    end
-  end
 
-'''
-  for i in 0..(nLoops - 1)
-    puts i
-    commands[i] = []
-    doListenerLoop(i, commands) # Starts listening loop
-    doPlayerLoop(i, commands)   # Starts playing loop
+# Number of loops listening to Unity commands
+nLoops = 0
+
+while nLoops <= 0 do
+  val = sync"/osc*/sonicpi/unity/trigger"
+  if val[0] == "init"
+    nLoops = val[1]
   end
-'''
-  
-  
+end
+
+# Creates rack of loops
+for i in 0..(nLoops - 1)
+  puts "Creating loop " + i.to_s
+  commands[i] = []
+  doListenerLoop(i, commands) # Starts loop listening thread
+  doPlayerLoop(i, commands)   # Starts loop playing thread
+end
+ 
+
+# Listen for loop creation messages:
+while(true)
+  val = sync"/osc*/sonicpi/unity/trigger"
+  if val[0] == "del_loop"
+    deleteLoop(val[1], commands)
+    nLoops = nLoops - 1
+  end
+end
   

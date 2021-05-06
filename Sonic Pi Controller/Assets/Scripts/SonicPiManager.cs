@@ -8,6 +8,9 @@ public enum BlockType
     LOOP, SYNTH, SAMPLE, SLEEP
 }
 
+
+#region Message Classes
+
 /// <summary>
 /// Virtual class for the action messages
 /// </summary>
@@ -21,7 +24,7 @@ public class ActionMessage
     public virtual List<object> ToObjectList()
     {
         List<object> list = new List<object>();
-        list.Add(loopId);
+        //list.Add(loopId);
         list.Add(blockId);
         list.Add(actionName);
         return list;
@@ -36,7 +39,7 @@ public class EditMessage : ActionMessage
     public override List<object> ToObjectList()
     {
         List<object> list = new List<object>();
-        list.Add(loopId);
+        //list.Add(loopId);
         list.Add(blockId);
         list.Add(actionName);
         list.Add(attributeName);
@@ -58,7 +61,7 @@ public class SleepMessage : ActionMessage
     public override List<object> ToObjectList()
     {
         List<object> list = new List<object>();
-        list.Add(loopId);
+        //list.Add(loopId);
         list.Add(blockId);
         list.Add(actionName);
         list.Add(attrs["duration"]);
@@ -72,35 +75,17 @@ public class SleepMessage : ActionMessage
 public class PlayerMessage : ActionMessage
 {
     public string playerName = "beep";
-    /*public float amp = 1;
-    public float pan = 0;
-    public float attack = 0;
-    public float sustain = 0;
-    public float release = 1;
-    public float decay = 0;
-    public float attack_level = 1;
-    public float sustain_level = 1;
-    public float decay_level = 1;*/
     public string fx = "";
 
     public override List<object> ToObjectList()
     {
         List<object> list = new List<object>();
-        list.Add(loopId);
+        //list.Add(loopId);
         list.Add(blockId);
         list.Add(actionName);
         list.Add(playerName);
         foreach (var attribute in attrs.Values)
             list.Add(attribute);
-        /*list.Add(amp);
-        list.Add(pan);
-        list.Add(attack);
-        list.Add(sustain);
-        list.Add(release);
-        list.Add(decay);
-        list.Add(attack_level);
-        list.Add(sustain_level);
-        list.Add(decay_level);*/
         list.Add(fx);
         return list;
     }
@@ -123,7 +108,7 @@ public class SynthMessage : PlayerMessage
     public override List<object> ToObjectList()
     {
         List<object> list = new List<object>();
-        list.Add(loopId);
+        //list.Add(loopId);
         list.Add(blockId);
         list.Add(actionName);
         list.Add(playerName);
@@ -152,6 +137,7 @@ public class SampleMessage : PlayerMessage
 }
 
 
+#endregion
 
 public class SonicPiManager : MonoBehaviour
 {
@@ -163,6 +149,9 @@ public class SonicPiManager : MonoBehaviour
     #endregion
 
     #region Member Variables
+
+    // Size of the rack of loops in SonicPi
+    [SerializeField] int numberOfLoops = 10;
 
     // Block attribute dictionaries
     [SerializeField]
@@ -215,6 +204,9 @@ public class SonicPiManager : MonoBehaviour
         sampleNames = JsonConvert.DeserializeObject<List<List<string>>>(sampleNamesFile.text);
         instrumentNames = JsonConvert.DeserializeObject<List<string>>(instrumentNamesFile.text);
 
+        // Initialize Sonic Pi loop listening/processing
+        instance.SendInitMessage(numberOfLoops);
+
         DontDestroyOnLoad(gameObject);
     }
 
@@ -243,6 +235,11 @@ public class SonicPiManager : MonoBehaviour
             default:
                 return null;
         }
+    }
+
+    public int GetNumberOfLoops()
+    {
+        return numberOfLoops;
     }
 
     /// <summary>
@@ -300,15 +297,14 @@ public class SonicPiManager : MonoBehaviour
     /// <summary>
     /// Sends a list of messages to Sonic Pi
     /// </summary>
-    public void SendActionMessageGroup(List<ActionMessage> msgList)
+    public void SendActionMessageGroup(List<object> msg)
     {
-        OSCHandler.Instance.SendMessageGroupToClient("SonicPi", "/sonicpi/unity/trigger", msgList);
-
+        //OSCHandler.Instance.SendMessageGroupToClient("SonicPi", "/sonicpi/unity/trigger", msgList);
+        OSCHandler.Instance.SendMessageToClient("SonicPi", "/sonicpi/unity/trigger", msg);
     }
-
-    public void SendNewLoopMessage()
+    public void SendInitMessage(int numLoops)
     {
-        OSCHandler.Instance.SendMessageToClient("SonicPi", "/sonicpi/unity/trigger", "loop");
+        OSCHandler.Instance.SendMessageToClient("SonicPi", "/sonicpi/unity/trigger", new List<object> { "init", numLoops });
     }
 
     public void SendDeleteLoopMessage(int loopId)
