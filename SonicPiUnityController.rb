@@ -288,7 +288,7 @@ Structure of the message:
       elsif
         # Not this loop => skip: number of values, number of commands and  message values
         numVals = val[a + 1]
-        a = a + 1 + 1 + numVals
+        a = a + 1 + 1 + numVals + 1
       end
       l = l + 1 # Next loop 
     end

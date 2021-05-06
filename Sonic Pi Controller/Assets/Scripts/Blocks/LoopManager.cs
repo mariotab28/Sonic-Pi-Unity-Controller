@@ -87,6 +87,9 @@ public class LoopManager : MonoBehaviour
                 // Add all command values
                 msgValues.AddRange(auxValuesList);
 
+                // Clear auxiliar value list
+                auxValuesList.Clear();
+                // Clear loop messages
                 loop.ClearMessages();
             }
         }
