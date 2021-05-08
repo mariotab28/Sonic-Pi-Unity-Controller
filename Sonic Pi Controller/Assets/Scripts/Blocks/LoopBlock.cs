@@ -74,17 +74,6 @@ public class LoopBlock : MonoBehaviour
 
     public List<ActionMessage> GetActionMessages()
     {
-
-        /*
-        int c = messages.Count;
-        for (int i = 0; i < c; i++)
-        {
-            SonicPiManager.Instance.sendActionMessage(messages[i]);
-            Debug.Log("Sending messages");
-        }
-
-        messages.Clear();
-        */
         for (int i = 0; i < blockChanges.Count; i++)
         {
             if (blockChanges[i])
@@ -100,13 +89,6 @@ public class LoopBlock : MonoBehaviour
         Debug.Log("Sending " + messages.Count + " messages.");
 
         return messages;
-
-        //BlockAttributes ba = fixedSleepBlock.GetBlockAttributes();
-        //SonicPiManager.instance.sendActionMessage(messages[0]);
-
-        //SonicPiManager.instance.SendActionMessageGroup(messages);
-        //messages.Clear();
-        //messages.RemoveAt(0);
     }
 
     public void SetChangedBlock(int index)
@@ -128,6 +110,11 @@ public class LoopBlock : MonoBehaviour
     public int GetLoopId()
     {
         return loopId;
+    }
+
+    public int GetBlockCount()
+    {
+        return blockCount;
     }
 
     public BlockShape AddSynthBlock()
@@ -218,7 +205,7 @@ public class LoopBlock : MonoBehaviour
 
     public void RemoveBlockAt(int index)
     {
-        // Create a delete message
+        // Create an empty block message
         ActionMessage msg = new ActionMessage();
         msg.loopId = loopId;
         msg.blockId = blocks.Count - 1;
@@ -226,16 +213,39 @@ public class LoopBlock : MonoBehaviour
         AddMessage(msg);
         blockChanges[msg.blockId] = true;
 
+        // Removes the block
         blocks.RemoveAt(index);
         blockChanges.RemoveAt(index);
 
+        // Update the blocks behind it
         for (int i = index; i < blocks.Count; i++)
         {
             BlockAttributes battr = blocks[i].GetBlockAttributes();
             battr.SetId(battr.GetBlockId() - 1);
             blockChanges[i] = true;
         }
+        // Update block count
         blockCount--;
+    }
+
+    // Add empty messages for blocks in the range [beg, end)
+    public void AddEmptyMessagesAtRange(int beg, int end)
+    {
+        for (int i = beg; i < end; i++)
+        {
+            // Create an empty block message
+            ActionMessage msg = new ActionMessage();
+            msg.loopId = loopId;
+            msg.blockId = i;
+            msg.actionName = "empty";
+            AddMessage(msg);
+        }
+    }
+
+    // Clear this loop's block list
+    public void ClearBlocks()
+    {
+        blocks.Clear();
     }
 
     // Force the block layout to refresh and update the order of its children
@@ -284,7 +294,6 @@ public class LoopBlock : MonoBehaviour
         }
 
         block.transform.SetParent(loopContainerGO.transform);
-        //block.transform.SetSiblingIndex(newIndex + 1);
 
         // Sort to change blocks list index
         blocks.Sort(bComparer);

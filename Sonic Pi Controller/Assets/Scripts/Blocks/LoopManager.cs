@@ -19,6 +19,7 @@ public class LoopManager : MonoBehaviour
         {
             instance = this;
             loops = new List<LoopBlock>();
+            emptyLoops = new Queue<EmptyLoop>();
             DontDestroyOnLoad(gameObject);
         }
     }
@@ -26,9 +27,22 @@ public class LoopManager : MonoBehaviour
 
     #endregion
 
+    struct EmptyLoop
+    {
+        public int loopId;
+        public int numBlocks;
+
+        public EmptyLoop(int loopId, int numBlocks)
+        {
+            this.loopId = loopId;
+            this.numBlocks = numBlocks;
+        }
+    }
+
     int loopCount = 0;
 
     List<LoopBlock> loops;
+    Queue<EmptyLoop> emptyLoops;
     [SerializeField] GameObject loopContainerGO;
     [SerializeField] GameObject loopPF;
 
@@ -94,6 +108,48 @@ public class LoopManager : MonoBehaviour
             }
         }
 
+        // Add empty loops
+        while(emptyLoops.Count > 0)
+        {
+            EmptyLoop empty = emptyLoops.Dequeue();
+            // Create list of empty messages
+            List<ActionMessage> msgGroup = new List<ActionMessage>();
+            for (int i = 0; i < empty.numBlocks; i++)
+            {
+                // Create an empty block message
+                ActionMessage msg = new ActionMessage();
+                msg.loopId = empty.loopId;
+                msg.blockId = i;
+                msg.actionName = "empty";
+                msgGroup.Add(msg);
+            }
+
+            // Increase number of loop messages
+            numberOfLoops++;
+            // Add id of the loop
+            msgValues.Add(empty.loopId);
+            int valuesCount = 0;
+
+            foreach (ActionMessage message in msgGroup)
+            {
+                List<object> valueList = message.ToObjectList();
+                // Increment values count
+                valuesCount += valueList.Count;
+                // Append to message group value list
+                auxValuesList.AddRange(valueList);
+            }
+
+            // Add number of values
+            msgValues.Add(valuesCount);
+            // Add number of commands
+            msgValues.Add(msgGroup.Count);
+            // Add all command values
+            msgValues.AddRange(auxValuesList);
+
+            // Clear auxiliar value list
+            auxValuesList.Clear();
+        }
+
         // Add number of loops at the start
         msgValues.Insert(0, numberOfLoops);
 
@@ -135,18 +191,33 @@ public class LoopManager : MonoBehaviour
 
     public void RemoveLoop(int loopId)
     {
-        // Send message to Sonic Pi
-        SonicPiManager.instance.SendDeleteLoopMessage(loopId);
+        int lastLoopId = loopCount - 1;
+        // For each loop from loopId + 1 onwards:
+        // a) decrease its id
+        // b) fill extra blocks with empty commands
+        for (int i = loopId + 1; i < loops.Count; i++)
+        {
+            loops[i].SetLoopId(i - 1); // Decrease loop index
+            loops[i].SetChangedLoop(true); // Set it to changed state
 
-        // Remove from list of loops
+            // If there were more blocks in the previous loop,
+            // empty messages must be added to overwrite these blocks in Sonic Pi with empty commands
+            int nBlocksA = loops[i - 1].GetBlockCount();
+            int nBlocksB = loops[i].GetBlockCount();
+            int dif = nBlocksA - nBlocksB;
+            if (dif > 0)
+                loops[i].AddEmptyMessagesAtRange(nBlocksB, nBlocksB + dif);
+        }
+
+        // Erase loops[loopId]
+        int blockCount = loops[loopId].GetBlockCount();
         loops.RemoveAt(loopId);
         loopCount--;
-        // Update other loops id
-        for (int i = loopId; i < loops.Count; i++)
-        {
-            loops[i].SetLoopId(i);
-            loops[i].SetChangedLoop(true);
-        }
+
+        // Last loop must become empty in Sonic Pi:
+        // Create an empty loop to remove commands from Sonic Pi's last loop
+        EmptyLoop empty = new EmptyLoop(lastLoopId, blockCount);
+        emptyLoops.Enqueue(empty);
     }
 
     /**********************************/
