@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Globalization;
 
 public class LoopBlock : MonoBehaviour
 {
@@ -23,6 +24,8 @@ public class LoopBlock : MonoBehaviour
     public int blockCount = 0;  // Number of blocks inside this loop
     int bpm = 60; // Loop's BPM
     string syncedWith = ""; // Name of the loop this loop is synced with (if any)
+    bool playing = true; // Indicates if the loop is playing or paused
+    bool loopAttrsChanged = false; // Flag that indicates wheter the loop attributes have changed
 
     List<BlockShape> blocks = new List<BlockShape>();   // List of blocks contained in this loop
     List<bool> blockChanges = new List<bool>();         // List of booleans indicating if the block of the same index has changes
@@ -58,6 +61,8 @@ public class LoopBlock : MonoBehaviour
         blockChanges.Add(true);
         blockCount++;
         fixedSleepBlock.AddBottomExtension(shape.GetColor()); // Add an extension to the block to indicate hierarchy
+
+        loopAttrsChanged = true;
     }
 
     #endregion
@@ -74,6 +79,21 @@ public class LoopBlock : MonoBehaviour
 
     public List<ActionMessage> GetActionMessages()
     {
+        // Adds a message if the loop attributes changed
+        if (loopAttrsChanged)
+        {
+            // Create the message
+            EditLoopMessage editMsg = new EditLoopMessage(loopId);
+            editMsg.active = playing ? 1 : 0;
+            editMsg.syncedWith = syncedWith;
+            editMsg.bpm = bpm;
+            // Add the message
+            messages.Add(editMsg);
+            // Reset changed flag
+            loopAttrsChanged = false;
+        }
+
+        // Adds a message for each changed block
         for (int i = 0; i < blockChanges.Count; i++)
         {
             if (blockChanges[i])
@@ -96,10 +116,15 @@ public class LoopBlock : MonoBehaviour
         blockChanges[index] = true;
     }
 
-    public void SetChangedLoop(bool changed)
+    public void SetChangedLoopBlocks(bool changed)
     {
         for (int i = 0; i < blockChanges.Count; i++)
             blockChanges[i] = changed;
+    }
+
+    public void SetChangedLoop(bool changed)
+    {
+        loopAttrsChanged = changed;
     }
 
     public void SetLoopId(int id)
@@ -362,4 +387,26 @@ public class LoopBlock : MonoBehaviour
         Destroy(loopContainerGO);
         Destroy(gameObject);
     }
+
+    // Toggles the loop playing state
+    public void TogglePlaying()
+    {
+        playing = !playing;
+        loopAttrsChanged = true;
+    }
+
+    // Change the loop's bpm and adds a message with the change
+    public void SetSync(string value)
+    {
+        syncedWith = value;
+        loopAttrsChanged = true;
+    }
+
+    // Change the loop's bpm and adds a message with the change
+    public void SetBPM(int value)
+    {
+        bpm = value;
+        loopAttrsChanged = true;
+    }
+
 }

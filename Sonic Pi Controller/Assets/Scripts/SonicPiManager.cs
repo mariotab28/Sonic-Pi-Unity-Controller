@@ -31,6 +31,9 @@ public class ActionMessage
     }
 }
 
+/*
+ * TODO: Use EditMessage??
+ *
 public class EditMessage : ActionMessage
 {
     public string attributeName = "";
@@ -44,6 +47,33 @@ public class EditMessage : ActionMessage
         list.Add(actionName);
         list.Add(attributeName);
         list.Add(newValue);
+        return list;
+    }
+}
+*/
+
+public class EditLoopMessage : ActionMessage
+{
+    public int active = 1; // 0 = Not active | 1 = Active
+    public string syncedWith = "";
+    public int bpm = 60;
+
+    public EditLoopMessage(int loopId)
+    {
+        actionName = "loop";
+        blockId = -1;
+        this.loopId = loopId;
+    }
+
+    public override List<object> ToObjectList()
+    {
+        List<object> list = new List<object>();
+
+        list.Add(blockId);
+        list.Add(actionName);
+        list.Add(active);
+        list.Add(syncedWith);
+        list.Add(bpm);
         return list;
     }
 }
@@ -61,7 +91,7 @@ public class SleepMessage : ActionMessage
     public override List<object> ToObjectList()
     {
         List<object> list = new List<object>();
-        //list.Add(loopId);
+
         list.Add(blockId);
         list.Add(actionName);
         list.Add(attrs["duration"]);
@@ -80,7 +110,7 @@ public class PlayerMessage : ActionMessage
     public override List<object> ToObjectList()
     {
         List<object> list = new List<object>();
-        //list.Add(loopId);
+
         list.Add(blockId);
         list.Add(actionName);
         list.Add(playerName);
@@ -97,7 +127,7 @@ public class PlayerMessage : ActionMessage
 public class SynthMessage : PlayerMessage
 {
     public int numOfNotes = 1;
-    public List<int> notes = new List<int>(new int[] {  });
+    public List<int> notes = new List<int>(new int[] { });
     public string mode = "tick";
 
     public SynthMessage()
@@ -108,7 +138,7 @@ public class SynthMessage : PlayerMessage
     public override List<object> ToObjectList()
     {
         List<object> list = new List<object>();
-        //list.Add(loopId);
+
         list.Add(blockId);
         list.Add(actionName);
         list.Add(playerName);

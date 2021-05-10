@@ -198,7 +198,8 @@ public class LoopManager : MonoBehaviour
         for (int i = loopId + 1; i < loops.Count; i++)
         {
             loops[i].SetLoopId(i - 1); // Decrease loop index
-            loops[i].SetChangedLoop(true); // Set it to changed state
+            loops[i].SetChangedLoopBlocks(true); // Set it to changed state
+            loops[i].SetChangedLoop(true); 
 
             // If there were more blocks in the previous loop,
             // empty messages must be added to overwrite these blocks in Sonic Pi with empty commands
@@ -227,7 +228,7 @@ public class LoopManager : MonoBehaviour
     {
         loops[loopId].RemoveBlockAt(blockId);
     }
-
+    /* //TODO: Use this?
     public void EditBlockAttribute(int loopId, int blockId, string attribute, float value)
     {
         ActionMessage msg = new EditMessage();
@@ -237,7 +238,7 @@ public class LoopManager : MonoBehaviour
         (msg as EditMessage).attributeName = attribute;
         (msg as EditMessage).newValue = value;
         loops[loopId].AddMessage(msg);
-    }
+    }*/
 
     public void AddBlockToLoop(int loopId, int blockId, string action)
     {

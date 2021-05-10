@@ -13,6 +13,18 @@ require 'ostruct'
   Attributes Structures
 ============================
 '''
+
+''' Attribute structure of the LOOPS '''
+LoopAttributes = Struct.new :active, :synced_with, :bpm do
+  # Initializes each attribute to its default value
+  def initialize(*)
+    super
+    self.active ||= 1
+    self.synced_with ||= ''
+    self.bpm ||= 60
+  end
+end
+
 ''' Attribute structure of the SYNTH play action '''
 SynthAttributes = Struct.new :action, :synth_name, :notes, :mode, :amp, :pan,
 :attack, :decay, :sustain, :release, :attack_level, :decay_level, :sustain_level, :fx do
@@ -245,7 +257,7 @@ Waits for messages from Unity and adds the received commands
 - id: Index of the listening loop
 - commands: The list of commands of the listening loop
 '''
-def listenUnityCommand(id, commands)
+def listenUnityCommand(id, commands, loops)
   # Gets OSC message from Unity
   val = sync"/osc*/sonicpi/unity/trigger"
 
@@ -263,14 +275,14 @@ def listenUnityCommand(id, commands)
     commands[comId] = com
   else
 
-'''
-Structure of the message:
-* numLoops, 
-  <for each loop:>
-  * loopId, numberOfValues, numberOfCommands,
-    <for each command:>
-    * commandId, commandName, <list of values for each attribute>
-'''
+    '''
+    Structure of the message:
+    * numLoops, 
+      <for each loop:>
+      * loopId, numberOfValues, numberOfCommands,
+        <for each command:>
+        * commandId, commandName, <list of values for each attribute>
+    '''
     numLoops = val[0]
     if numLoops <= 0
       puts "Wrong number of loops."
@@ -309,7 +321,18 @@ Structure of the message:
       comId = val[a]
       i = a + 1 # Skip comId
       puts "Received Command: " + val[i].to_s + "(at " + i.to_s + ")"
+      command = true # Flag that indicates a change in the command list
       case val[i] # Check command name
+      # COMMAND: CHANGE LOOP ATTRIBUTES
+      when "loop"
+        command = false # Don't change the command list
+        # Set Loop attributes
+        loops[id].active = val[i + 1]
+        loops[id].synced_with = val[i + 2]
+        loops[id].bpm = val[i + 3]
+        nAttr = 3 
+        # Skip: command name and attributes(1)
+        a = a + 1 + nAttr + 1
       # ACTION: SLEEP
       when "sleep"
         comAttr = parseSleepCommand(val, i)
@@ -333,23 +356,25 @@ Structure of the message:
         # Skip: command name + player name + number of notes 
         #   + numOfNotes + mode + attributes(9 + fx)
         a = a + 1 + 1 + 1 + numOfNotes + 1 + 10 + 1
-      # SAMPLE
-      when "sample"
-        comAttr = parseSampleCommand(val, i)
-        # Skip: command name + player name + attributes(47 + fx)
-        a = a + 1 + 1 + 48 + 1
-      when "empty"
-        comAttr = SleepAttributes.new("empty", -1)
-        # Skip: command name and attributes(1)
-        a = a + 1 + 1
-      else
-        comAttr = nil
-        puts "ERROR: Unknown action name."
+        # SAMPLE
+        when "sample"
+          comAttr = parseSampleCommand(val, i)
+          # Skip: command name + player name + attributes(47 + fx)
+          a = a + 1 + 1 + 48 + 1
+        when "empty"
+          comAttr = SleepAttributes.new("empty", -1)
+          # Skip: command name and attributes(1)
+          a = a + 1 + 1
+        else
+          comAttr = nil
+          puts "ERROR: Unknown action name."
       end
-        
+      
+      if command
         com = Command.new(loopId, comId, comAttr)
         # Add the command to command list
         commands[comId] = com
+      end
     end
   end
 end
@@ -359,132 +384,142 @@ Process the command list
 - id: Index of the processing loop
 - commands: The list of commands of the processing loop
 '''
-  def processCommands(id, commands)
-    slept = false
-    # Processes each command from the command list in order
-    commands.each do |com|
-      puts "Processing: " + com.com_attr.action.to_s
-      case com.com_attr.action
-      # ACTION: SLEEP
-      when "sleep"
-	sleep com.com_attr.sleep_duration
-        slept = true
-	# ACTION: PLAY SYNTH
-      when "synth"
-            if com.com_attr.notes.count > 0
-              use_synth com.com_attr.synth_name
-              if com.com_attr.mode == 'tick' then
-                tickNote = com.com_attr.notes.tick
-              elsif com.com_attr.mode == 'chord' then
-                tickNote = com.com_attr.notes
-              elsif com.com_attr.mode == 'choose' then
-                tickNote = com.com_attr.notes.choose
-              else
-                puts "Error: Unknown synth play mode."
-              end
-              if com.com_attr.fx != ''
-                with_fx com.com_attr.fx do
-                  play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
-                    attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
-                    decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
-                    decay_level: com.com_attr.decay_level
-                end
-              else
-                play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
-                  attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
-                  decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
-                  decay_level: com.com_attr.decay_level
-              end
-            end
-	# ACTION: PLAY SAMPLE
-      when "sample"
-	if com.com_attr.fx != ''
-	  with_fx com.com_attr.fx do
-	    sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
-                attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level
-	  end
-	else
-	  sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
-              attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level, pitch: com.com_attr.pitch
-	end
-	
-	''' TODO: RESTO DE ATRIBUTOS '''
-      when "empty"
-	puts "Empty command in loop " + id.to_s
-	# STOP
-      when "stop"
-        puts "Stop processing loop " + id.to_s
-	stop
-      else
-	puts "ERROR: Unknown command name. Can't process command."
+def processCommands(id, commands, loops)
+  slept = false
+  synced = false
+  # Get loop attributes
+  loop_active = loops[id].active
+  loop_synced_with = loops[id].synced_with
+  loop_bpm = loops[id].bpm
+  # Do not process commands if loop is not active
+  if loop_active != 1
+    sleep 0.1
+    return
+  end
+  # Either sync or use bpm
+  if loop_synced_with != ''
+    puts "Loop " + id.to_s + " syncing with " + loop_synced_with
+    sync loop_synced_with
+    synced = true
+  else
+    use_bpm loop_bpm
+  end
+  # Processes each command from the command list in order
+  commands.each do |com|
+    puts "Processing: " + com.com_attr.action.to_s
+    case com.com_attr.action
+    # ACTION: SLEEP
+    when "sleep"
+      sleep com.com_attr.sleep_duration
+      slept = true
+    # ACTION: PLAY SYNTH
+    when "synth"
+      if com.com_attr.notes.count > 0
+        use_synth com.com_attr.synth_name
+        if com.com_attr.mode == 'tick' then
+          tickNote = com.com_attr.notes.tick
+        elsif com.com_attr.mode == 'chord' then
+          tickNote = com.com_attr.notes
+        elsif com.com_attr.mode == 'choose' then
+          tickNote = com.com_attr.notes.choose
+        else
+          puts "Error: Unknown synth play mode."
+        end
+        if com.com_attr.fx != ''
+          with_fx com.com_attr.fx do
+            play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
+              attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
+              decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
+              decay_level: com.com_attr.decay_level
+          end
+        else
+          play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
+            attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
+            decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
+            decay_level: com.com_attr.decay_level
+        end
       end
-    end
-    # Check if there is one sleep at the end
-    if !slept
-      sleep 0.5 # Needs to sleep at least 0.01
+    # ACTION: PLAY SAMPLE
+    when "sample"
+      if com.com_attr.fx != ''
+        with_fx com.com_attr.fx do
+          sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
+                    attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level
+        end
+      else
+        sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
+                  attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level, pitch: com.com_attr.pitch
+      end
+      ''' TODO: RESTO DE ATRIBUTOS '''
+      ''' ... '''
+    when "empty"
+      puts "Empty command in loop " + id.to_s
+    # STOP
+    when "stop"
+      puts "Stop processing loop " + id.to_s
+      stop
+    else
+      puts "ERROR: Unknown command name. Can't process command."
     end
   end
+  # Check if there is one sleep at the end
+  if !slept && !synced
+    sleep 0.5 # Needs to sleep at least 0.01
+  end
+end
   
   
-  '''
+'''
 ============================
 Listen/Play loops definition
 ============================
 '''
-  
-  def doListenerLoop(id,commands)
-    puts "Listener " + id.to_s
-    # LISTENER LOOP
-    in_thread do
-      loop do
-        #puts "Listening (" + id.to_s + ")..."
-        # Listen commands for command list 'id'
-        listenUnityCommand(id, commands[id])
-        sleep 0.1
-      end
+
+def doListenerLoop(id,commands, loops)
+  puts "Listener " + id.to_s
+  # LISTENER LOOP
+  in_thread do
+    loop do
+      #puts "Listening (" + id.to_s + ")..."
+      # Listen commands for command list 'id'
+      listenUnityCommand(id, commands[id], loops)
+      sleep 0.1
     end
   end
-  
-  def doPlayerLoop(id,commands)
-    puts "Player " + id.to_s
-    # Set the live_loop name
-    loopName = "playerLoop#{id.to_s}"
-    # PLAYER LOOP
-    live_loop loopName do
-      #puts "Playing (" + id.to_s + ")..."
-      # Process command list number 'id'
-      processCommands(id, commands[id])
-    end
+end
+
+def doPlayerLoop(id,commands, loops)
+  puts "Player " + id.to_s
+  # Set the live_loop name
+  loopName = "playerLoop#{id.to_s}"
+  # PLAYER LOOP
+  live_loop loopName do
+    #puts "Playing (" + id.to_s + ")..."
+    # Process command list number 'id'
+    processCommands(id, commands[id], loops)
   end
-  
-  
-  '''
+end
+
+
+'''
 ========================================================
 Variables and Initialization of the loop rack
 ========================================================
 '''
 use_osc "localhost", 4560
 
+puts "STARTING SONIC PI CONTROLLER!"
+
 # Command list
 commands = []
-  
-'''
-def addLoop(nLoops, commands)
-  # Add new loop
-  loopId = nLoops
-  puts "Adding new loop! id: " + loopId.to_s
-  
-  commands[loopId] = []
-  doListenerLoop(loopId, commands) # Starts listening loop
-  doPlayerLoop(loopId, commands)   # Starts playing loop
-end
-''' 
+# Loop attributes list
+loops = []
+
 def deleteLoop(id, commands)
   # Remove loop[id]
   puts "Removing loop with id: " + id.to_s
   commands[id] = []
 end
-
 
 # Number of loops listening to Unity commands
 nLoops = 0
@@ -500,17 +535,11 @@ end
 for i in 0..(nLoops - 1)
   puts "Creating loop " + i.to_s
   commands[i] = []
-  doListenerLoop(i, commands) # Starts loop listening thread
-  doPlayerLoop(i, commands)   # Starts loop playing thread
+  loopAttr = LoopAttributes.new
+  loops[i] = loopAttr
+  doListenerLoop(i, commands, loops) # Starts loop listening thread
+  doPlayerLoop(i, commands, loops)   # Starts loop playing thread
 end
- 
 
-# Listen for loop creation messages:
-while(true)
-  val = sync"/osc*/sonicpi/unity/trigger"
-  if val[0] == "del_loop"
-    deleteLoop(val[1], commands)
-    nLoops = nLoops - 1
-  end
-end
   
+

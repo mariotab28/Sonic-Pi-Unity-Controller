@@ -16,7 +16,7 @@ public class BlockController : MonoBehaviour
 
     public void EditAttribute(string attrName, string value)
     {
-        LoopManager.instance.EditBlockAttribute(0, id, attrName, float.Parse(value));
+        //LoopManager.instance.EditBlockAttribute(0, id, attrName, float.Parse(value));
     }
 
     public ActionMessage ConfigureBlock(int blockId, string action)
