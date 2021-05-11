@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
+using System.IO;
 
 public enum BlockType
 {
@@ -55,7 +56,7 @@ public class EditMessage : ActionMessage
 public class EditLoopMessage : ActionMessage
 {
     public int active = 1; // 0 = Not active | 1 = Active
-    public string syncedWith = "";
+    public int syncedWith = -1;
     public int bpm = 60;
 
     public EditLoopMessage(int loopId)
@@ -213,6 +214,8 @@ public class SonicPiManager : MonoBehaviour
     /// </summary>
     void Awake()
     {
+        Debug.Log(Path.GetFullPath("."));
+        Debug.Log(Path.GetFullPath(Application.dataPath));
         if (instance != null)
         {
             Debug.LogError("Another sonic pi manager found!");

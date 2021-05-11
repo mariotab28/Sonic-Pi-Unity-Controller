@@ -19,7 +19,7 @@ public class LoopAttributeManager : MonoBehaviour
     public void OnBPMChange()
     {
         int value = int.Parse(bpmField.text);
-        Debug.Log("SETTING BPM TO " + value);
+        //Debug.Log("SETTING BPM TO " + value);
         loop.SetBPM(value);
     }
 }

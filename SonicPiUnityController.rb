@@ -328,7 +328,12 @@ def listenUnityCommand(id, commands, loops)
         command = false # Don't change the command list
         # Set Loop attributes
         loops[id].active = val[i + 1]
-        loops[id].synced_with = val[i + 2]
+        sync = val[i + 2]
+        if sync >= 0 && sync < loops.length()
+          loops[id].synced_with = "/live_loop/playerLoop" + sync.to_s 
+        elsif sync == -1
+          loops[id].synced_with = ""
+        end
         loops[id].bpm = val[i + 3]
         nAttr = 3 
         # Skip: command name and attributes(1)

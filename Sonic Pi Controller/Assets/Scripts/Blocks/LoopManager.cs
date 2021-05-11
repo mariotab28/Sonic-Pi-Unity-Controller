@@ -41,7 +41,10 @@ public class LoopManager : MonoBehaviour
 
     int loopCount = 0;
 
+    // List of active loops
     List<LoopBlock> loops;
+    // Dictionary containing the <name, id> of each active 
+    Dictionary<string, int> loopNameDict;
     Queue<EmptyLoop> emptyLoops;
     [SerializeField] GameObject loopContainerGO;
     [SerializeField] GameObject loopPF;
@@ -53,6 +56,8 @@ public class LoopManager : MonoBehaviour
 
     private void Start()
     {
+        loopNameDict = new Dictionary<string, int>();
+
         // Add an empty loop on Start
         AddLoop();
     }
@@ -181,10 +186,12 @@ public class LoopManager : MonoBehaviour
         // Add loop to list of loops
         loops.Add(newLoop);
 
-        // Send message to sonic pi asking for loop creation
-        //SonicPiManager.instance.SendNewLoopMessage();
+        // Add to name dictionary
+        loopNameDict.Add(newLoop.GetName(), loopCount);
 
         loopCount++;
+
+        UpdateSyncingOptions();
 
         return newLoop;
     }
@@ -192,14 +199,21 @@ public class LoopManager : MonoBehaviour
     public void RemoveLoop(int loopId)
     {
         int lastLoopId = loopCount - 1;
+
+        // Remove from name dictionary
+        loopNameDict.Remove(loops[loopId].GetName());
+
         // For each loop from loopId + 1 onwards:
         // a) decrease its id
         // b) fill extra blocks with empty commands
         for (int i = loopId + 1; i < loops.Count; i++)
         {
-            loops[i].SetLoopId(i - 1); // Decrease loop index
+            int nid = i - 1; // Decrease loop index
+            loops[i].SetLoopId(nid); // Update index
             loops[i].SetChangedLoopBlocks(true); // Set it to changed state
-            loops[i].SetChangedLoop(true); 
+            loops[i].SetChangedLoop(true); // Set loop to changed
+            loops[i].UpdateLoopName(); // Update loop name text
+            loopNameDict[loops[i].GetName()] = nid; // Update name dictionary
 
             // If there were more blocks in the previous loop,
             // empty messages must be added to overwrite these blocks in Sonic Pi with empty commands
@@ -219,6 +233,37 @@ public class LoopManager : MonoBehaviour
         // Create an empty loop to remove commands from Sonic Pi's last loop
         EmptyLoop empty = new EmptyLoop(lastLoopId, blockCount);
         emptyLoops.Enqueue(empty);
+
+        UpdateSyncingOptions();
+    }
+
+    // Returns a list of the names of the available loops a loop can sync to
+    public List<string> GetSyncingOptions()
+    {
+        List<string> options = new List<string>();
+
+        foreach (var entry in loopNameDict)
+            options.Add(entry.Key);
+
+        return options;
+    }
+
+    // Update syncing options for all loops
+    void UpdateSyncingOptions()
+    {
+        List<string> options = new List<string>();
+
+        foreach (var entry in loopNameDict)
+            options.Add(entry.Key);
+
+        foreach (var loop in loops)
+            loop.SetSyncingOptions(new List<string>(options));
+    }
+
+    // Returns a loop's id given its name
+    public int GetLoopIDFromName(string name)
+    {
+        return loopNameDict[name];
     }
 
     /**********************************/

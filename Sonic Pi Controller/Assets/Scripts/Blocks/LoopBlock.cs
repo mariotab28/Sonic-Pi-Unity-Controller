@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using System.Globalization;
+using TMPro;
 
 public class LoopBlock : MonoBehaviour
 {
@@ -30,6 +31,13 @@ public class LoopBlock : MonoBehaviour
     List<BlockShape> blocks = new List<BlockShape>();   // List of blocks contained in this loop
     List<bool> blockChanges = new List<bool>();         // List of booleans indicating if the block of the same index has changes
     BlockShape fixedSleepBlock; // The sleep block that must contain the loop unless it is synced
+
+    // Loop name
+    [SerializeField] TMP_Text nameText;
+    string loopCustomName = "";
+
+    // Sync options
+    [SerializeField] SyncDropdownConfigure syncDropdown;
     #endregion
 
     #region Initialization
@@ -63,6 +71,7 @@ public class LoopBlock : MonoBehaviour
         fixedSleepBlock.AddBottomExtension(shape.GetColor()); // Add an extension to the block to indicate hierarchy
 
         loopAttrsChanged = true;
+        UpdateLoopName();
     }
 
     #endregion
@@ -85,7 +94,8 @@ public class LoopBlock : MonoBehaviour
             // Create the message
             EditLoopMessage editMsg = new EditLoopMessage(loopId);
             editMsg.active = playing ? 1 : 0;
-            editMsg.syncedWith = syncedWith;
+            if (syncedWith != "")
+                editMsg.syncedWith = LoopManager.instance.GetLoopIDFromName(syncedWith); 
             editMsg.bpm = bpm;
             // Add the message
             messages.Add(editMsg);
@@ -409,4 +419,23 @@ public class LoopBlock : MonoBehaviour
         loopAttrsChanged = true;
     }
 
+    public void UpdateLoopName()
+    {
+        if (loopCustomName == "")
+            nameText.text = "Loop " + (loopId + 1).ToString();
+    }
+
+    public string GetName()
+    {
+        if (loopCustomName == "")
+            return nameText.text;
+        else
+            return loopCustomName;
+    }
+
+    public void SetSyncingOptions(List<string> options)
+    {
+        options.Remove(nameText.text);
+        syncDropdown.SetSyncingOptions(options);
+    }
 }
