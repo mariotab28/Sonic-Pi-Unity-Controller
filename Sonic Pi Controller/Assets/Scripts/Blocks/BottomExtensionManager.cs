@@ -49,4 +49,11 @@ public class BottomExtensionManager : MonoBehaviour
     {
         UpdateBottomExtensions(new List<Color>());
     }
+
+    // Change the color of the extension
+    public void SetColor(Color color)
+    {
+        //GetComponent<Image>().color = color;
+    }
+
 }

@@ -3,6 +3,34 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+public class BlockComparer : IComparer<BlockShape>
+{
+    public int Compare(BlockShape a, BlockShape b)
+    {
+        if (a == null || a.GetBlockAttributes() == null)
+        {
+            if (b == null || b.GetBlockAttributes() == null)
+                return 0;
+            else
+                return -1;
+        }
+        else
+        {
+            if (b == null || b.GetBlockAttributes() == null)
+                return 1;
+            else
+            {
+                if (a.GetBlockAttributes().GetBlockId() > b.GetBlockAttributes().GetBlockId())
+                    return 1;
+                else if (a.GetBlockAttributes().GetBlockId() < b.GetBlockAttributes().GetBlockId())
+                    return -1;
+                else
+                    return 0;
+            }
+        }
+    }
+}
+
 public class BlockShape : MonoBehaviour
 {
     #region Variables
@@ -16,7 +44,7 @@ public class BlockShape : MonoBehaviour
     [SerializeField] Image edgeIMG;
     [SerializeField] Color edgeHighlightColor;
     Color edgeColor;
-
+    [SerializeField] int initialExtensions = 0;
 
     [SerializeField] BottomExtensionManager mainBlock;
     
@@ -54,6 +82,10 @@ public class BlockShape : MonoBehaviour
 
         // Set body sprite
         bodyImage.sprite = (hasGap ? gapBodySprite : fullBodySprite);
+
+        // Add initial extensions
+        for (int i = 0; i < initialExtensions; i++)
+            AddExtension();
 
         // Set color
         SetColor(color);
@@ -143,6 +175,10 @@ public class BlockShape : MonoBehaviour
         bodyImage.color = color;
         edgeIMG.color = color;
         edgeColor = color;
+        foreach (var ext in attachedBlocks)
+        {
+            ext.SetColor(color);
+        }
     }
 
     // Get the color of the block
