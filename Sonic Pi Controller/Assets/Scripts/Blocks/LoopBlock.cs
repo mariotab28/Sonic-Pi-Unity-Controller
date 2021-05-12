@@ -71,7 +71,7 @@ public class LoopBlock : MonoBehaviour
         fixedSleepBlock.AddBottomExtension(shape.GetColor()); // Add an extension to the block to indicate hierarchy
 
         loopAttrsChanged = true;
-        UpdateLoopName();
+        UpdateLoopNameText();
     }
 
     #endregion
@@ -405,11 +405,33 @@ public class LoopBlock : MonoBehaviour
         loopAttrsChanged = true;
     }
 
+    // Sets the playing state of the loop
+    public void SetPlaying(bool value)
+    {
+        playing = value;
+        loopAttrsChanged = true;
+    }
+
     // Change the loop's bpm and adds a message with the change
     public void SetSync(string value)
     {
         syncedWith = value;
+        syncDropdown.SetSelection(value);
         loopAttrsChanged = true;
+    }
+
+    // Returns the name of loop this loop is syncing with
+    public string GetSync()
+    {
+        return syncedWith;
+    }
+
+    // Reset the syncing of this loop
+    public void Desync()
+    {
+        SetSync("");
+        syncDropdown.ResetSelection();
+        Debug.Log("DESYNC!");
     }
 
     // Change the loop's bpm and adds a message with the change
@@ -419,7 +441,7 @@ public class LoopBlock : MonoBehaviour
         loopAttrsChanged = true;
     }
 
-    public void UpdateLoopName()
+    public void UpdateLoopNameText()
     {
         if (loopCustomName == "")
             nameText.text = "Loop " + (loopId + 1).ToString();
@@ -433,9 +455,22 @@ public class LoopBlock : MonoBehaviour
             return loopCustomName;
     }
 
+    public void SetName(string newName)
+    {
+        string prevName = GetName();
+        loopCustomName = newName; // Set custom name
+        if (newName != "")
+            LoopManager.instance.UpdateLoopNameInDict(prevName, newName, loopId); // Update the name in the loop manager dictionary
+        else
+        {
+            LoopManager.instance.UpdateLoopNameInDict(prevName, "Loop " + (loopId + 1).ToString(), loopId); // Update the name in the loop manager dictionary
+            UpdateLoopNameText();
+        }
+    }
+
     public void SetSyncingOptions(List<string> options)
     {
-        options.Remove(nameText.text);
+        options.Remove(GetName());
         syncDropdown.SetSyncingOptions(options);
     }
 }

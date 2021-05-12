@@ -198,6 +198,9 @@ public class LoopManager : MonoBehaviour
 
     public void RemoveLoop(int loopId)
     {
+        // Desync loops syncing to the loop being removed
+        DesyncAllFromLoop(loops[loopId].GetName());
+
         int lastLoopId = loopCount - 1;
 
         // Remove from name dictionary
@@ -212,8 +215,14 @@ public class LoopManager : MonoBehaviour
             loops[i].SetLoopId(nid); // Update index
             loops[i].SetChangedLoopBlocks(true); // Set it to changed state
             loops[i].SetChangedLoop(true); // Set loop to changed
-            loops[i].UpdateLoopName(); // Update loop name text
-            loopNameDict[loops[i].GetName()] = nid; // Update name dictionary
+
+            // Update the sync situation of this loop
+            string prevName = loops[i].GetName();
+            loopNameDict.Remove(prevName); // Remove the previous name from dictionary
+            loops[i].UpdateLoopNameText(); // Update loop name text
+            string newName = loops[i].GetName();
+            loopNameDict[newName] = nid; // Update name dictionary
+            SwapAllSyncingToLoop(prevName, newName); // Update loops that were syncing to this loop
 
             // If there were more blocks in the previous loop,
             // empty messages must be added to overwrite these blocks in Sonic Pi with empty commands
@@ -235,6 +244,22 @@ public class LoopManager : MonoBehaviour
         emptyLoops.Enqueue(empty);
 
         UpdateSyncingOptions();
+    }
+
+    // Desync all loops syncing the loop with name loopName
+    void DesyncAllFromLoop(string loopName)
+    {
+        foreach (var loop in loops)
+            if (loop.GetSync() == loopName)
+                loop.Desync();
+    }
+
+    // For each loop, if it was syncing to prevName, sync it to newName
+    void SwapAllSyncingToLoop(string prevName, string newName)
+    {
+        foreach (var loop in loops)
+            if (loop.GetSync() == prevName)
+                loop.SetSync(newName);
     }
 
     // Returns a list of the names of the available loops a loop can sync to
@@ -260,10 +285,30 @@ public class LoopManager : MonoBehaviour
             loop.SetSyncingOptions(new List<string>(options));
     }
 
+
+
     // Returns a loop's id given its name
     public int GetLoopIDFromName(string name)
     {
         return loopNameDict[name];
+    }
+
+    // Deletes the previous entry in the names dictionary for loops[loopId] and adds a new one with the new name
+    public void UpdateLoopNameInDict(string prevName, string newName, int loopId)
+    {
+        loopNameDict.Remove(prevName); // Remove the previous entry
+        loopNameDict[newName] = loopId; // Add new entry
+
+        UpdateSyncingOptions();
+    }
+
+    // Sets the playing state of each loop
+    public void SetLoopsPlaying(bool value)
+    {
+        foreach (LoopBlock loop in loops)
+            loop.SetPlaying(value);
+
+        RunLoops();
     }
 
     /**********************************/

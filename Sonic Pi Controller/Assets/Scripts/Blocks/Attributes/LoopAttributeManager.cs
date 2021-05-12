@@ -6,7 +6,7 @@ using TMPro;
 public class LoopAttributeManager : MonoBehaviour
 {
     [SerializeField] TMP_InputField bpmField;
-    [SerializeField] TMP_InputField syncField;
+    [SerializeField] TMP_InputField nameField;
 
     LoopBlock loop;
 
@@ -21,5 +21,11 @@ public class LoopAttributeManager : MonoBehaviour
         int value = int.Parse(bpmField.text);
         //Debug.Log("SETTING BPM TO " + value);
         loop.SetBPM(value);
+    }
+
+    public void OnNameChange()
+    {
+        string newName = nameField.text;
+        loop.SetName(newName);
     }
 }
