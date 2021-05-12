@@ -398,7 +398,7 @@ def processCommands(id, commands, loops)
   loop_bpm = loops[id].bpm
   # Do not process commands if loop is not active
   if loop_active != 1
-    sleep 0.1
+    sleep 1
     return
   end
   # Either sync or use bpm
@@ -416,7 +416,9 @@ def processCommands(id, commands, loops)
     # ACTION: SLEEP
     when "sleep"
       sleep com.com_attr.sleep_duration
-      slept = true
+      if com.com_attr.sleep_duration > 0.001
+        slept = true
+      end
     # ACTION: PLAY SYNTH
     when "synth"
       if com.com_attr.notes.count > 0
@@ -513,7 +515,10 @@ Variables and Initialization of the loop rack
 '''
 use_osc "localhost", 4560
 
-puts "STARTING SONIC PI CONTROLLER!"
+puts "========================================================"
+puts "Starting Sonic Pi controller."
+puts "You can start the application now."
+puts "========================================================"
 
 # Command list
 commands = []
