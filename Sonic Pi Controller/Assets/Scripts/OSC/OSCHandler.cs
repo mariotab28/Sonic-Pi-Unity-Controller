@@ -86,6 +86,8 @@ public class OSCHandler : MonoBehaviour
 
 	
 	private const int _loglength = 100;
+
+	private OSCServer applicationServer;
 	#endregion
 	
 	/// <summary>
@@ -96,10 +98,14 @@ public class OSCHandler : MonoBehaviour
 	{
         //Initialize OSC clients (transmitters)	
         CreateClient("SonicPi", IPAddress.Parse("127.0.0.1"), 4560);
-    }
 
-    public void Quit()
+		//Initialize OSC servers (listeners)
+		//applicationServer = CreateServer("Application", 4561);
+	}
+
+	public void Quit()
     {
+		//applicationServer.Close();
         SendMessageToClient("SonicPi", "/sonicpi/unity/trigger", "stop");
     }
 
