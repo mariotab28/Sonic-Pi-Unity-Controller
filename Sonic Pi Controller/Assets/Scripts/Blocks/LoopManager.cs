@@ -356,4 +356,11 @@ public class LoopManager : MonoBehaviour
     {
         addLoopZone.SetActive(active);
     }
+
+    public void AdvanceLoop(int loopId, int comId)
+    {
+        if (loopId < 0 || loopId >= loopCount) return;
+        loops[loopId].AdvancePlayingBlock(comId);
+    }
+
 }

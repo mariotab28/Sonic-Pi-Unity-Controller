@@ -159,6 +159,7 @@ MonoBehaviour:
   gapBodySprite: {fileID: 21300000, guid: 57c6570f12f1f8d4e8237d618526cac2, type: 3}
   edgeIMG: {fileID: 0}
   edgeHighlightColor: {r: 0.17801023, g: 1, b: 0, a: 0}
+  initialExtensions: 0
   mainBlock: {fileID: 9168647519983526296}
   blockLayoutPF: {fileID: -4437695380082406264, guid: 651d34d58b9c8b147a731eb7e3cfde29, type: 3}
   bodyImage: {fileID: 5220172608134561975}
@@ -174,6 +175,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 81d0ec74c298e864a9ba0d1192706ee0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  blockAttributes: {fileID: 0}
+  shape: {fileID: 0}
 --- !u!1001 &4420203628164918544
 PrefabInstance:
   m_ObjectHideFlags: 0

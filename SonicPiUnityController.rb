@@ -314,6 +314,7 @@ Waits for messages from Unity and adds the received commands
 - commands: The list of commands of the listening loop
 '''
 def listenUnityCommand(id, commands, loops)
+  use_osc "localhost", 4560
   # Gets OSC message from Unity
   val = sync"/osc*/sonicpi/unity/trigger"
 
@@ -465,12 +466,18 @@ def processCommands(id, commands, loops)
   else
     use_bpm loop_bpm
   end
+
   # Processes each command from the command list in order
   commands.each do |com|
+    commandPlayed = false
     puts "Processing: " + com.com_attr.action.to_s
     case com.com_attr.action
     # ACTION: SLEEP
     when "sleep"
+      # Send advance message to application
+      use_osc "localhost", 5555
+      osc "Application", "advance_loop", id, com.com_id
+
       sleep com.com_attr.sleep_duration
       if com.com_attr.sleep_duration > 0.001
         slept = true
@@ -496,6 +503,7 @@ def processCommands(id, commands, loops)
           playSynthCommand(tickNote, com)
         end
       end
+      commandPlayed = true
     # ACTION: PLAY SAMPLE
     when "sample"
       if com.com_attr.fx != ''
@@ -505,6 +513,7 @@ def processCommands(id, commands, loops)
       else
         playSampleCommand(com)
       end
+      commandPlayed = true
       ''' TODO: RESTO DE ATRIBUTOS '''
       ''' ... '''
     when "empty"
@@ -515,6 +524,11 @@ def processCommands(id, commands, loops)
       stop
     else
       puts "ERROR: Unknown command name. Can't process command."
+    end
+    # Send advance message to application
+    if commandPlayed
+      use_osc "localhost", 5555
+      osc "Application", "advance_loop", id, com.com_id
     end
   end
   # Check if there is one sleep at the end

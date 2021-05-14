@@ -87,9 +87,8 @@ public class OSCHandler : MonoBehaviour
 	
 	private const int _loglength = 100;
 
-	private OSCServer applicationServer;
 	#endregion
-	
+
 	/// <summary>
 	/// Initializes the OSC Handler.
 	/// Here you can create the OSC servers and clientes.
@@ -225,6 +224,11 @@ public class OSCHandler : MonoBehaviour
         }
         // Add to OSCPackets list
         packets.Add(packet);
+
+		/*
+		Debug.Log("RECEIVED: " + packet.Data[0].ToString() + " " + packet.Data[1].ToString());
+		if(packet.Data[0].ToString() == "advance_loop")	 LoopManager.instance.AdvanceLoop((int)packet.Data[1]);
+		*/
     }
 	
 	/// <summary>

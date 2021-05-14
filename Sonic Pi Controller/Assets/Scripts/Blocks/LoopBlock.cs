@@ -38,6 +38,9 @@ public class LoopBlock : MonoBehaviour
 
     // Sync options
     [SerializeField] SyncDropdownConfigure syncDropdown;
+
+    // Indication of the playing block
+    int playingBlockId = 0;
     #endregion
 
     #region Initialization
@@ -473,4 +476,12 @@ public class LoopBlock : MonoBehaviour
         options.Remove(GetName());
         syncDropdown.SetSyncingOptions(options);
     }
+
+    public void AdvancePlayingBlock(int comId)
+    {
+        blocks[playingBlockId].GetBlockIndicator().HideIndicator();
+        playingBlockId = comId;
+        if (!blockChanges[playingBlockId])  blocks[playingBlockId].GetBlockIndicator().ShowIndicator();
+    }
+
 }
