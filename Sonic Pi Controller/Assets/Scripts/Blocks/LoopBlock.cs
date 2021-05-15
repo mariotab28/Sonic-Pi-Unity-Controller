@@ -29,6 +29,7 @@ public class LoopBlock : MonoBehaviour
     bool loopAttrsChanged = false; // Flag that indicates wheter the loop attributes have changed
 
     List<BlockShape> blocks = new List<BlockShape>();   // List of blocks contained in this loop
+    List<BlockShape> updatedBlocks = new List<BlockShape>();   // List of the blocks as it is being played in Sonic Pi
     List<bool> blockChanges = new List<bool>();         // List of booleans indicating if the block of the same index has changes
     BlockShape fixedSleepBlock; // The sleep block that must contain the loop unless it is synced
 
@@ -116,10 +117,15 @@ public class LoopBlock : MonoBehaviour
             }
         }
 
+        // Set updated blocks list
+        updatedBlocks.Clear();
+        foreach (var block in blocks)
+            updatedBlocks.Add(block);
+
         if (messages.Count <= 0)
             return null;
 
-        Debug.Log("Sending " + messages.Count + " messages.");
+        //Debug.Log("Sending " + messages.Count + " messages.");
 
         return messages;
     }
@@ -477,11 +483,19 @@ public class LoopBlock : MonoBehaviour
         syncDropdown.SetSyncingOptions(options);
     }
 
+    // Update the indicator state of the blocks
     public void AdvancePlayingBlock(int comId)
     {
-        blocks[playingBlockId].GetBlockIndicator().HideIndicator();
+        if (playingBlockId < updatedBlocks.Count)
+        {
+            // Hide previous playing block indicator
+            BlockShape prevPlayingBlockShape = updatedBlocks[playingBlockId];
+            if (prevPlayingBlockShape) prevPlayingBlockShape.GetBlockIndicator().HideIndicator();
+        }
         playingBlockId = comId;
-        if (!blockChanges[playingBlockId])  blocks[playingBlockId].GetBlockIndicator().ShowIndicator();
+        // Show current playing block indicator
+        BlockShape currentPlayingBlockShape = updatedBlocks[playingBlockId];
+        if (currentPlayingBlockShape) currentPlayingBlockShape.GetBlockIndicator().ShowIndicator();
     }
 
 }

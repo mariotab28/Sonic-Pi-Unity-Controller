@@ -255,7 +255,6 @@ public class SonicPiManager : MonoBehaviour
     // Receives and handles a packet from the OSCReceiver
     public void HandlePacket(OSCPacket packet)
     {
-        //Debug.Log(packet.Data[0].ToString() + ": " + packet.Data[1].ToString());
         if (packet.Data[0].ToString() == "advance_loop")
         {
             // Advance loop
