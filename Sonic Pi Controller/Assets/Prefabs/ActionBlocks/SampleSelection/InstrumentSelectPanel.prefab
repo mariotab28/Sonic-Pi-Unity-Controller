@@ -308,9 +308,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.49803925, g: 0.49803925, b: 0.49803925, a: 1}
-    m_PressedColor: {r: 0.21960786, g: 0.21960786, b: 0.21960786, a: 1}
-    m_SelectedColor: {r: 0.49803925, g: 0.49803925, b: 0.49803925, a: 1}
+    m_HighlightedColor: {r: 0.745283, g: 0.745283, b: 0.745283, a: 1}
+    m_PressedColor: {r: 0.49803925, g: 0.49803925, b: 0.49803925, a: 1}
+    m_SelectedColor: {r: 0.74509805, g: 0.74509805, b: 0.74509805, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -622,6 +622,8 @@ GameObject:
   - component: {fileID: 2688743493150662895}
   - component: {fileID: 8781634095825924307}
   - component: {fileID: 7794123542149838175}
+  - component: {fileID: 4444188794833041791}
+  - component: {fileID: 6279364636750281152}
   m_Layer: 5
   m_Name: InstrumentSelectPanel
   m_TagString: Untagged
@@ -704,6 +706,31 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerButtonPF: {fileID: 5352327862696666653, guid: 6f3ff408ee5b67b4090a156a0a54ef9f, type: 3}
   buttonContainer: {fileID: 4493879884690928076}
+--- !u!114 &4444188794833041791
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8729683820077767894}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc613552a905bf6429ec547d58b43413, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resetPosition: 0
+--- !u!225 &6279364636750281152
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8729683820077767894}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1001 &1723104336391712867
 PrefabInstance:
   m_ObjectHideFlags: 0

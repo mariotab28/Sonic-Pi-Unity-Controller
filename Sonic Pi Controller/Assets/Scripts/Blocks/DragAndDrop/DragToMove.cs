@@ -5,11 +5,11 @@ using UnityEngine.EventSystems;
 
 public class DragToMove : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
-    LoopBlock loop;
-    Canvas canvas;
-    BlockAttributes blockAttributes;
-    BlockShape shape;
-    BlockDropHandler dropHandler;
+    //LoopBlock loop;
+    //Canvas canvas;
+    //BlockAttributes blockAttributes;
+    //BlockShape shape;
+    //BlockDropHandler dropHandler;
     RectTransform rectTransform;
     CanvasGroup canvasGroup;
 
@@ -17,19 +17,16 @@ public class DragToMove : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
 
     bool drag = false;
 
+    [SerializeField] bool resetPosition = true;
+
     private void Awake()
     {
-        blockAttributes = GetComponent<BlockAttributes>();
-        shape = GetComponent<BlockShape>();
-        dropHandler = GetComponent<BlockDropHandler>();
+        //blockAttributes = GetComponent<BlockAttributes>();
+        //shape = GetComponent<BlockShape>();
+        //dropHandler = GetComponent<BlockDropHandler>();
         rectTransform = GetComponent<RectTransform>();
         canvasGroup = GetComponent<CanvasGroup>();
-        canvas = LoopManager.instance.canvas;
-    }
-
-    private void Start()
-    {
-        loop = blockAttributes.GetLoop();
+        //canvas = LoopManager.instance.canvas;
     }
 
     private void Update()
@@ -60,7 +57,7 @@ public class DragToMove : MonoBehaviour, IPointerDownHandler, IBeginDragHandler,
     public void OnEndDrag(PointerEventData eventData)
     {
         //Debug.Log("DRAGGIN ENDS!");
-        rectTransform.anchoredPosition = initialPos;
+        if(resetPosition) rectTransform.anchoredPosition = initialPos;
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1.0f;
         drag = false;

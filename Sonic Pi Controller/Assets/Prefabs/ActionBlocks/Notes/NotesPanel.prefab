@@ -603,6 +603,7 @@ GameObject:
   - component: {fileID: 8361627579723468564}
   - component: {fileID: 4373756552136186093}
   - component: {fileID: 4912674065664231417}
+  - component: {fileID: 3886639215700397135}
   m_Layer: 5
   m_Name: NotesPanel
   m_TagString: Untagged
@@ -697,6 +698,19 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &3886639215700397135
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2050837902205346738}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc613552a905bf6429ec547d58b43413, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resetPosition: 0
 --- !u!1 &2408010436588640254
 GameObject:
   m_ObjectHideFlags: 0

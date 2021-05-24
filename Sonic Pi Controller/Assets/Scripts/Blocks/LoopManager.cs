@@ -339,7 +339,19 @@ public class LoopManager : MonoBehaviour
     // Change the position of a block inside its loop
     public void ChangeBlockPosition(int loopId, BlockShape block, int newBlockId)
     {
-        loops[loopId].ChangeBlockPosition(block, newBlockId);
+        if (block.GetBlockAttributes().GetLoopId() == loopId)
+            loops[loopId].ChangeBlockPosition(block, newBlockId);
+        else
+            ChangeBlockLoop(loopId, block, newBlockId + 1);
+    }
+
+    // Move a block from one loop to another
+    public void ChangeBlockLoop(int loopId, BlockShape block, int newBlockId)
+    {
+        loops[block.GetBlockAttributes().GetLoopId()].DeattachBlock(newBlockId);
+        block.RemoveBottomExtensions();
+        loops[loopId].AddBlock(block, newBlockId);
+        loops[loopId].AttachBlock(block, newBlockId);
     }
 
     public void AddMessage(int loopId, ActionMessage message)

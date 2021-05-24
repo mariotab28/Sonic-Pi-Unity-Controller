@@ -40,7 +40,7 @@ public class NoteMenuManager : MonoBehaviour
         mode = msg.mode;
     }
 
-    public void SpawnNotePanel(int note, Text noteText)
+    public void SpawnNotePanel(int note, TMPro.TMP_Text noteText)
     {
         if (!instantiated)
         {

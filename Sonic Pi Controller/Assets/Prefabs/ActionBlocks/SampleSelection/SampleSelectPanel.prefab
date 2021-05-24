@@ -97,9 +97,9 @@ MonoBehaviour:
   m_Transition: 1
   m_Colors:
     m_NormalColor: {r: 1, g: 1, b: 1, a: 1}
-    m_HighlightedColor: {r: 0.6226415, g: 0, b: 0, a: 1}
-    m_PressedColor: {r: 0.46226418, g: 0, b: 0, a: 1}
-    m_SelectedColor: {r: 0.62352943, g: 0, b: 0, a: 1}
+    m_HighlightedColor: {r: 0.7169812, g: 0.7169812, b: 0.7169812, a: 1}
+    m_PressedColor: {r: 0.46226418, g: 0.46226418, b: 0.46226418, a: 1}
+    m_SelectedColor: {r: 0.7176471, g: 0.7176471, b: 0.7176471, a: 1}
     m_DisabledColor: {r: 0.78431374, g: 0.78431374, b: 0.78431374, a: 0.5019608}
     m_ColorMultiplier: 1
     m_FadeDuration: 0.1
@@ -322,6 +322,8 @@ GameObject:
   - component: {fileID: 6361143683579783331}
   - component: {fileID: 767030435663466738}
   - component: {fileID: 4452578990988250131}
+  - component: {fileID: 2040653400006248264}
+  - component: {fileID: 7403355319419174458}
   m_Layer: 5
   m_Name: SampleSelectPanel
   m_TagString: Untagged
@@ -407,6 +409,31 @@ MonoBehaviour:
   buttonContainer: {fileID: 6014278179285378416}
   categoryButtonPF: {fileID: 8694938946199410102, guid: 2e08b249c9419a64b98a98bd78ab6f92, type: 3}
   backButton: {fileID: 819801257558187627}
+--- !u!114 &2040653400006248264
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363007300118774641}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dc613552a905bf6429ec547d58b43413, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  resetPosition: 0
+--- !u!225 &7403355319419174458
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1363007300118774641}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1624762398165814276
 GameObject:
   m_ObjectHideFlags: 0

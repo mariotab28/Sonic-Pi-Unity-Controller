@@ -88,7 +88,7 @@ MonoBehaviour:
   gapBodySprite: {fileID: 21300000, guid: 57c6570f12f1f8d4e8237d618526cac2, type: 3}
   indicator: {fileID: 1950549117507321497}
   edgeIMG: {fileID: 882954915973481327}
-  edgeHighlightColor: {r: 0.16862746, g: 1, b: 0, a: 1}
+  edgeHighlightColor: {r: 0.7735849, g: 0.3466536, b: 0.5870268, a: 1}
   initialExtensions: 0
   mainBlock: {fileID: 3828962639325599884}
   blockLayoutPF: {fileID: -4437695380082406264, guid: 651d34d58b9c8b147a731eb7e3cfde29, type: 3}
@@ -133,6 +133,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dc613552a905bf6429ec547d58b43413, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  resetPosition: 1
 --- !u!225 &4026675009200108760
 CanvasGroup:
   m_ObjectHideFlags: 0

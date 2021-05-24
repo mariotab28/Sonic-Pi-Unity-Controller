@@ -8,7 +8,7 @@ public class NoteSelector : MonoBehaviour
     NoteMenuManager noteMenu;
 
     Transform list;
-    Text noteText_;
+    TMPro.TMP_Text noteText_;
 
     [SerializeField]
     Note notePF;
@@ -54,7 +54,7 @@ public class NoteSelector : MonoBehaviour
         return octave_;
     }
 
-    public void Configure(NoteMenuManager noteMenu, Transform listTF, int note, Text noteText)
+    public void Configure(NoteMenuManager noteMenu, Transform listTF, int note, TMPro.TMP_Text noteText)
     {
         this.noteMenu = noteMenu;
         list = listTF;
