@@ -53,6 +53,7 @@ public class LoopManager : MonoBehaviour
     [SerializeField] GameObject destroyZone;
     [SerializeField] GameObject addLoopZone;
 
+    float maxContainerWidth = 0;
 
     private void Start()
     {
@@ -285,7 +286,21 @@ public class LoopManager : MonoBehaviour
             loop.SetSyncingOptions(new List<string>(options));
     }
 
+    // First, checks the total width of each loop
+    // If needed, updates the max width of the loop container
+    public void UpdateContainerWidth()
+    {
+        float width = 0;
+        foreach (var loop in loops)
+        {
+            width += loop.GetTotalWidth();
+        }
+        maxContainerWidth = width;
 
+        RectTransform rt = loopContainerGO.GetComponent<RectTransform>();
+        Vector2 containerSize = rt.sizeDelta;
+        rt.sizeDelta = new Vector2(width, containerSize.y);
+    }
 
     // Returns a loop's id given its name
     public int GetLoopIDFromName(string name)

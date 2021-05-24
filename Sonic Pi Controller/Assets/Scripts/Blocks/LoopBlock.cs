@@ -33,7 +33,7 @@ public class LoopBlock : MonoBehaviour
     List<bool> blockChanges = new List<bool>();         // List of booleans indicating if the block of the same index has changes
     BlockShape fixedSleepBlock; // The sleep block that must contain the loop unless it is synced
     [SerializeField] BlockShape endLoopBlock; // A fixed block shape at the end of the loop
-
+    float blockWidth = 300;
 
     // Loop name
     [SerializeField] TMP_Text nameText;
@@ -86,6 +86,7 @@ public class LoopBlock : MonoBehaviour
 
         loopAttrsChanged = true;
         UpdateLoopNameText();
+        LoopManager.instance.UpdateContainerWidth();
     }
 
     #endregion
@@ -190,6 +191,7 @@ public class LoopBlock : MonoBehaviour
     {
         blocks.RemoveAt(index);
         blockCount--;
+        LoopManager.instance.UpdateContainerWidth();
     }
 
     public void AttachBlock(BlockShape block, int index)
@@ -248,6 +250,7 @@ public class LoopBlock : MonoBehaviour
         blocks.Insert(blockId, block);
         blockChanges.Insert(blockId, true);
         blockCount++;
+        LoopManager.instance.UpdateContainerWidth();
 
         // Set its id (-2 because sleep will always be last)
         // TODO: pass the id to this function
@@ -283,6 +286,7 @@ public class LoopBlock : MonoBehaviour
         // Removes the block
         blocks.RemoveAt(index);
         blockChanges.RemoveAt(index);
+        LoopManager.instance.UpdateContainerWidth();
 
         // Update the blocks behind it
         for (int i = index; i < blocks.Count; i++)
@@ -485,6 +489,16 @@ public class LoopBlock : MonoBehaviour
             return nameText.text;
         else
             return loopCustomName;
+    }
+
+    // Returns the sum of the width of all blocks in a loop, including the loop starting and ending blocks
+    public float GetTotalWidth()
+    {
+        float w = 0;
+        w += 2 * blockWidth; // Add the loop starting and ending blocks
+        for (int i = 0; i < blockCount; i++)
+            w += blockWidth;
+        return w;
     }
 
     public void SetName(string newName)

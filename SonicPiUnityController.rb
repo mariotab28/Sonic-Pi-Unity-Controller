@@ -330,6 +330,8 @@ def listenUnityCommand(id, commands, loops)
     
     # Add the command to command list
     commands[comId] = com
+
+    stop
   else
 
     '''
@@ -582,17 +584,16 @@ puts "Starting Sonic Pi controller."
 puts "You can start the application now."
 puts "========================================================"
 
-# Command list
-commands = []
-# Loop attributes list
-loops = []
-
 def deleteLoop(id, commands)
   # Remove loop[id]
   puts "Removing loop with id: " + id.to_s
   commands[id] = []
 end
 
+# Command list
+commands = []
+# Loop attributes list
+loops = []
 # Number of loops listening to Unity commands
 nLoops = 0
 
@@ -612,6 +613,3 @@ for i in 0..(nLoops - 1)
   doListenerLoop(i, commands, loops) # Starts loop listening thread
   doPlayerLoop(i, commands, loops)   # Starts loop playing thread
 end
-
-  
-
