@@ -13,7 +13,8 @@ public class NoteMenuManager : MonoBehaviour
     Note notePF;
 
     NoteSelector notePanel;
-    public Dropdown modeDropdown_;
+    //public Dropdown modeDropdown_;
+    [SerializeField] TMPro.TMP_Dropdown modeDropdown_;
 
     public Transform list;
     
