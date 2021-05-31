@@ -598,13 +598,13 @@ loops = []
 nLoops = 0
 
 while nLoops <= 0 do
-  val = sync"/osc*/sonicpi/unity/trigger"
+  val = sync "/osc*/sonicpi/unity/trigger"
   if val[0] == "init"
     nLoops = val[1]
   end
 end
 
-# Creates rack of loops
+# Creates the rack of loops
 for i in 0..(nLoops - 1)
   puts "Creating loop " + i.to_s
   commands[i] = []
