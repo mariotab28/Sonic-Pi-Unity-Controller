@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Newtonsoft.Json;
 using System.IO;
+using UnityOSC;
 
 public enum BlockType
 {
@@ -205,6 +206,9 @@ public class SonicPiManager : MonoBehaviour
     [SerializeField] TextAsset instrumentNamesFile;
     List<string> instrumentNames;
 
+
+    //private OSCServer applicationServer;
+    private OSCReciever receiver;
     #endregion
 
     #region Methods
@@ -224,7 +228,13 @@ public class SonicPiManager : MonoBehaviour
 
         instance = this;
         print("Sonic Pi Manager started.");
+
+        // Initialize OSC Handler
         OSCHandler.Instance.Init();
+
+        //Initialize OSC receiver
+        receiver = new OSCReciever();
+        receiver.Open(5555);
 
         // Initialize attribute dictionaries
         synthDictionary = JsonConvert.DeserializeObject<Dictionary<string, float>>(synthAttributes.text);
@@ -240,6 +250,27 @@ public class SonicPiManager : MonoBehaviour
         instance.SendInitMessage(numberOfLoops);
 
         DontDestroyOnLoad(gameObject);
+    }
+
+    // Receives and handles a packet from the OSCReceiver
+    public void HandlePacket(OSCPacket packet)
+    {
+        if (packet.Data[0].ToString() == "advance_loop")
+        {
+            // Advance loop
+            LoopManager.instance.AdvanceLoop((int)packet.Data[1], (int)packet.Data[2]);
+        }
+        else
+            Debug.LogWarning("Warning: Received unknown packet");
+    }
+
+    private void Update()
+    {
+        while (receiver.hasWaitingMessages())
+        {
+            OSCMessage msg = receiver.getNextMessage();
+            HandlePacket(msg);
+        }
     }
 
     public static Dictionary<TKey, TValue> GetDictionaryClone<TKey, TValue>(Dictionary<TKey, TValue> original)

@@ -199,7 +199,7 @@ def parseSampleCommand(val, i)
   comAttr.lpf_decay = val[i + 13]
   comAttr.lpf_sustain = val[i + 14]
   comAttr.lpf_release = val[i + 15]
-  comAttr.lpf_min= val[i + 16]
+  comAttr.lpf_min = val[i + 16]
   comAttr.lpf_init_level = val[i + 17]
   comAttr.lpf_release_level = val[i + 18]
   comAttr.lpf_sustain_level = val[i + 19]
@@ -237,6 +237,62 @@ def parseSampleCommand(val, i)
 end
 
 '''
+Process a synth command and applies its attributes
+'''
+def playSynthCommand(tickNote, com)
+  play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
+    attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
+    decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
+    decay_level: com.com_attr.decay_level
+end
+
+'''
+Process a synth command and applies its attributes
+'''
+def playSampleCommand(com)
+  sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
+    attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level,
+    lpf: com.com_attr.lpf,
+    lpf_attack: com.com_attr.lpf_attack,
+    lpf_decay: com.com_attr.lpf_decay,
+    lpf_sustain: com.com_attr.lpf_sustain,
+    lpf_release: com.com_attr.lpf_release,
+    lpf_min: com.com_attr.lpf_min,
+    lpf_init_level: com.com_attr.lpf_init_level,
+    lpf_release_level: com.com_attr.lpf_release_level,
+    lpf_sustain_level: com.com_attr.lpf_sustain_level,
+    lpf_decay_level: com.com_attr.lpf_decay_level,
+    lpf_attack_level: com.com_attr.lpf_attack_level,
+    lpf_env_curve: com.com_attr.lpf_env_curve,
+    hpf: com.com_attr.hpf,
+    hpf_max: com.com_attr.hpf_max,
+    hpf_attack: com.com_attr.hpf_attack,
+    hpf_decay: com.com_attr.hpf_decay,
+    hpf_sustain: com.com_attr.hpf_sustain,
+    hpf_release: com.com_attr.hpf_release,
+    hpf_init_level: com.com_attr.hpf_init_level,
+    hpf_release_level: com.com_attr.hpf_release_level,
+    hpf_sustain_level: com.com_attr.hpf_sustain_level,
+    hpf_decay_level: com.com_attr.hpf_decay_level,
+    hpf_attack_level: com.com_attr.hpf_attack_level,
+    hpf_env_curve: com.com_attr.hpf_env_curve,
+    rate: com.com_attr.rate,
+    start: com.com_attr.start,
+    finish: com.com_attr.finish,
+    norm: com.com_attr.norm,
+    pitch: com.com_attr.pitch,
+    window_size: com.com_attr.window_size,
+    pitch_dis: com.com_attr.pitch_dis,
+    time_dis: com.com_attr.time_dis,
+    compress: com.com_attr.compress,
+    threshold: com.com_attr.threshold,
+    clamp_time: com.com_attr.clamp_time,
+    slope_above: com.com_attr.slope_above,
+    slope_below: com.com_attr.slope_below,
+    relax_time: com.com_attr.relax_time
+end
+
+'''
 ============================
   Listen/Process Methods
 ============================
@@ -258,6 +314,7 @@ Waits for messages from Unity and adds the received commands
 - commands: The list of commands of the listening loop
 '''
 def listenUnityCommand(id, commands, loops)
+  use_osc "localhost", 4560
   # Gets OSC message from Unity
   val = sync"/osc*/sonicpi/unity/trigger"
 
@@ -273,6 +330,8 @@ def listenUnityCommand(id, commands, loops)
     
     # Add the command to command list
     commands[comId] = com
+
+    stop
   else
 
     '''
@@ -409,12 +468,18 @@ def processCommands(id, commands, loops)
   else
     use_bpm loop_bpm
   end
+
   # Processes each command from the command list in order
   commands.each do |com|
+    commandPlayed = false
     puts "Processing: " + com.com_attr.action.to_s
     case com.com_attr.action
     # ACTION: SLEEP
     when "sleep"
+      # Send advance message to application
+      use_osc "localhost", 5555
+      osc "Application", "advance_loop", id, com.com_id
+
       sleep com.com_attr.sleep_duration
       if com.com_attr.sleep_duration > 0.001
         slept = true
@@ -434,29 +499,23 @@ def processCommands(id, commands, loops)
         end
         if com.com_attr.fx != ''
           with_fx com.com_attr.fx do
-            play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
-              attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
-              decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
-              decay_level: com.com_attr.decay_level
+            playSynthCommand(tickNote, com)
           end
         else
-          play tickNote, amp: com.com_attr.amp, pan: com.com_attr.pan,
-            attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release,
-            decay: com.com_attr.decay, attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level,
-            decay_level: com.com_attr.decay_level
+          playSynthCommand(tickNote, com)
         end
       end
+      commandPlayed = true
     # ACTION: PLAY SAMPLE
     when "sample"
       if com.com_attr.fx != ''
         with_fx com.com_attr.fx do
-          sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
-                    attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level
+          playSampleCommand(com)
         end
       else
-        sample com.com_attr.sample_name, amp: com.com_attr.amp, pan: com.com_attr.pan, attack: com.com_attr.attack, sustain: com.com_attr.sustain, release: com.com_attr.release, decay: com.com_attr.decay,
-                  attack_level: com.com_attr.attack_level, sustain_level: com.com_attr.sustain_level, decay_level: com.com_attr.decay_level, pitch: com.com_attr.pitch
+        playSampleCommand(com)
       end
+      commandPlayed = true
       ''' TODO: RESTO DE ATRIBUTOS '''
       ''' ... '''
     when "empty"
@@ -467,6 +526,11 @@ def processCommands(id, commands, loops)
       stop
     else
       puts "ERROR: Unknown command name. Can't process command."
+    end
+    # Send advance message to application
+    if commandPlayed
+      use_osc "localhost", 5555
+      osc "Application", "advance_loop", id, com.com_id
     end
   end
   # Check if there is one sleep at the end
@@ -520,28 +584,27 @@ puts "Starting Sonic Pi controller."
 puts "You can start the application now."
 puts "========================================================"
 
-# Command list
-commands = []
-# Loop attributes list
-loops = []
-
 def deleteLoop(id, commands)
   # Remove loop[id]
   puts "Removing loop with id: " + id.to_s
   commands[id] = []
 end
 
+# Command list
+commands = []
+# Loop attributes list
+loops = []
 # Number of loops listening to Unity commands
 nLoops = 0
 
 while nLoops <= 0 do
-  val = sync"/osc*/sonicpi/unity/trigger"
+  val = sync "/osc*/sonicpi/unity/trigger"
   if val[0] == "init"
     nLoops = val[1]
   end
 end
 
-# Creates rack of loops
+# Creates the rack of loops
 for i in 0..(nLoops - 1)
   puts "Creating loop " + i.to_s
   commands[i] = []
@@ -550,6 +613,3 @@ for i in 0..(nLoops - 1)
   doListenerLoop(i, commands, loops) # Starts loop listening thread
   doPlayerLoop(i, commands, loops)   # Starts loop playing thread
 end
-
-  
-

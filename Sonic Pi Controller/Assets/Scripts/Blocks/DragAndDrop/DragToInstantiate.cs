@@ -6,6 +6,8 @@ using UnityEngine.EventSystems;
 public class DragToInstantiate : MonoBehaviour, IPointerDownHandler, IBeginDragHandler, IEndDragHandler, IDragHandler
 {
     [SerializeField] Canvas canvas;
+    Transform originalParent;
+    int originalOrder = 0;
 
     Vector2 initialPos;
 
@@ -36,6 +38,11 @@ public class DragToInstantiate : MonoBehaviour, IPointerDownHandler, IBeginDragH
         canvasGroup.blocksRaycasts = false;
         canvasGroup.alpha = .5f;
 
+        originalParent = transform.parent;
+        originalOrder = transform.GetSiblingIndex();
+        transform.SetParent(canvas.transform);
+        transform.SetAsLastSibling();
+
         if (gameObject.CompareTag("loop"))
             LoopManager.instance.SetAddLoopZone(true);
     }
@@ -53,6 +60,8 @@ public class DragToInstantiate : MonoBehaviour, IPointerDownHandler, IBeginDragH
         canvasGroup.blocksRaycasts = true;
         canvasGroup.alpha = 1.0f;
         drag = false;
+        transform.SetParent(originalParent);
+        transform.SetSiblingIndex(originalOrder);
 
         if (gameObject.CompareTag("loop"))
             LoopManager.instance.SetAddLoopZone(false);

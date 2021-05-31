@@ -53,6 +53,7 @@ public class LoopManager : MonoBehaviour
     [SerializeField] GameObject destroyZone;
     [SerializeField] GameObject addLoopZone;
 
+    float maxContainerWidth = 0;
 
     private void Start()
     {
@@ -285,7 +286,21 @@ public class LoopManager : MonoBehaviour
             loop.SetSyncingOptions(new List<string>(options));
     }
 
+    // First, checks the total width of each loop
+    // If needed, updates the max width of the loop container
+    public void UpdateContainerWidth()
+    {
+        float width = 0;
+        foreach (var loop in loops)
+        {
+            width += loop.GetTotalWidth();
+        }
+        maxContainerWidth = width;
 
+        RectTransform rt = loopContainerGO.GetComponent<RectTransform>();
+        Vector2 containerSize = rt.sizeDelta;
+        rt.sizeDelta = new Vector2(width, containerSize.y);
+    }
 
     // Returns a loop's id given its name
     public int GetLoopIDFromName(string name)
@@ -339,7 +354,19 @@ public class LoopManager : MonoBehaviour
     // Change the position of a block inside its loop
     public void ChangeBlockPosition(int loopId, BlockShape block, int newBlockId)
     {
-        loops[loopId].ChangeBlockPosition(block, newBlockId);
+        if (block.GetBlockAttributes().GetLoopId() == loopId)
+            loops[loopId].ChangeBlockPosition(block, newBlockId);
+        else
+            ChangeBlockLoop(loopId, block, newBlockId + 1);
+    }
+
+    // Move a block from one loop to another
+    public void ChangeBlockLoop(int loopId, BlockShape block, int newBlockId)
+    {
+        loops[block.GetBlockAttributes().GetLoopId()].DeattachBlock(newBlockId);
+        block.RemoveBottomExtensions();
+        loops[loopId].AddBlock(block, newBlockId);
+        loops[loopId].AttachBlock(block, newBlockId);
     }
 
     public void AddMessage(int loopId, ActionMessage message)
@@ -356,4 +383,11 @@ public class LoopManager : MonoBehaviour
     {
         addLoopZone.SetActive(active);
     }
+
+    public void AdvanceLoop(int loopId, int comId)
+    {
+        if (loopId < 0 || loopId >= loopCount) return;
+        loops[loopId].AdvancePlayingBlock(comId);
+    }
+
 }

@@ -41,6 +41,8 @@ public class BlockShape : MonoBehaviour
     [SerializeField] Sprite fullBodySprite;
     [SerializeField] Sprite gapBodySprite;
 
+    [SerializeField] BlockIndicatorController indicator;
+
     [SerializeField] Image edgeIMG;
     [SerializeField] Color edgeHighlightColor;
     Color edgeColor;
@@ -200,6 +202,12 @@ public class BlockShape : MonoBehaviour
         SplitBlockOnDrag splitC = GetComponent<SplitBlockOnDrag>();
         if (splitC) splitC.enabled = canSplit;
     }
+
+    public BlockIndicatorController GetBlockIndicator()
+    {
+        return indicator;
+    }
+
     #endregion
 
     #region Logic Methods

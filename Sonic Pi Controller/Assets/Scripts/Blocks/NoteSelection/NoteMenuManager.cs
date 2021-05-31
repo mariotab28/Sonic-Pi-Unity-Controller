@@ -13,7 +13,8 @@ public class NoteMenuManager : MonoBehaviour
     Note notePF;
 
     NoteSelector notePanel;
-    public Dropdown modeDropdown_;
+    //public Dropdown modeDropdown_;
+    [SerializeField] TMPro.TMP_Dropdown modeDropdown_;
 
     public Transform list;
     
@@ -40,7 +41,7 @@ public class NoteMenuManager : MonoBehaviour
         mode = msg.mode;
     }
 
-    public void SpawnNotePanel(int note, Text noteText)
+    public void SpawnNotePanel(int note, TMPro.TMP_Text noteText)
     {
         if (!instantiated)
         {
