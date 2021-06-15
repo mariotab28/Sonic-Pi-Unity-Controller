@@ -20,20 +20,40 @@ public class BlockDropHandler : MonoBehaviour, IDropHandler, IPointerEnterHandle
         if(!shape.HasEdge())
             return;
 
+        shape.SetHighlighted(false);
+
         // Check if the dropped object is a block or a block spawner
-        if (eventData.pointerDrag != null && !eventData.pointerDrag.CompareTag("Untagged"))
+        if (eventData.pointerDrag != null && !eventData.pointerDrag.CompareTag("Untagged") && !eventData.pointerDrag.CompareTag("loop"))
         {
-            if (eventData.pointerDrag.CompareTag("block"))  // Block
+            bool isBlock = eventData.pointerDrag.CompareTag("block");
+
+            if (isBlock)  // Block
+            {
+                BlockAttributes otherAttr = eventData.pointerDrag.GetComponent<BlockAttributes>();
+                if (!otherAttr) return;
+
+                int thisLoop = blockAttributes.GetLoopId(), otherLoop = otherAttr.GetLoopId();
+                // If the dropped block doesn't correspond to this loop, ignore it
+                if (thisLoop != otherLoop)
+                    return;
+
+                // Change block position
                 MoveBlock(eventData.pointerDrag);
+            }
             else  // Block spawner
                 LoopManager.instance.AddBlockToLoop(loopC.loopId, blockAttributes.GetBlockId() + 1, eventData.pointerDrag.tag);
-            shape.SetHighlighted(false);
         }
     }
 
     public void OnPointerEnter(PointerEventData eventData)
     {
-        HighlightEdge(true, eventData.pointerDrag);
+        if (eventData.pointerDrag == null) return;
+        int thisLoop = blockAttributes.GetLoopId(), otherLoop;
+        BlockAttributes otherAttr = eventData.pointerDrag.GetComponent<BlockAttributes>();
+        if (!otherAttr) otherLoop = thisLoop;
+        else otherLoop = otherAttr.GetLoopId();
+
+        if(!eventData.pointerDrag.CompareTag("loop") && thisLoop == otherLoop) HighlightEdge(true, eventData.pointerDrag);
     }
 
     public void OnPointerExit(PointerEventData eventData)

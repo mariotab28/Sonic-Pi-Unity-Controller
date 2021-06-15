@@ -72,6 +72,7 @@ public class LoopBlock : MonoBehaviour
         fixedSleepBlock.SetDraggable(false);
         fixedSleepBlock.SetSplitable(false);
         fixedSleepBlock.SetEdge(true);
+        fixedSleepBlock.SetColor(Color.gray);
         blocks.Add(fixedSleepBlock);
         blockChanges.Add(true);
         blockCount++;
@@ -203,7 +204,7 @@ public class LoopBlock : MonoBehaviour
     // Instantiate a block of a specific action and adds it to the loop
     public void AddBlock(string action, int blockId)
     {
-        Debug.Log("Adding " + action + " block.");
+        //Debug.Log("Adding " + action + " block.");
 
         // Instantiate a block depending on the action
         BlockShape block;
@@ -369,12 +370,12 @@ public class LoopBlock : MonoBehaviour
         // Sort to change blocks list index
         blocks.Sort(bComparer);
 
-        foreach (var bl in blocks)
-            Debug.Log(bl.name + " " + bl.transform.GetSiblingIndex());
+        //foreach (var bl in blocks)
+        //    Debug.Log(bl.name + " " + bl.transform.GetSiblingIndex());
 
         StartCoroutine(RefreshBlockLayout(block, newIndex));
 
-        Debug.Log("Moved from " + prevIndex + " to " + newIndex);
+        //Debug.Log("Moved from " + prevIndex + " to " + newIndex);
     }
 
     /// <summary>

@@ -218,7 +218,6 @@ public class SonicPiManager : MonoBehaviour
     /// </summary>
     void Awake()
     {
-        Debug.Log(Path.GetFullPath("."));
         if (instance != null)
         {
             Debug.LogError("Another sonic pi manager found!");
